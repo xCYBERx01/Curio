@@ -26,7 +26,7 @@ body {
 
 ::selection {
   background: var(--curio-accent);
-  color: #0a0a0b;
+  color: #fff;
 }
 
 .skip-link {
@@ -35,7 +35,7 @@ body {
   left: 12px;
   z-index: 100;
   background: var(--curio-text);
-  color: #0a0a0b;
+  color: #fff;
   font-family: var(--font-mono);
   font-size: 12px;
   padding: 8px 12px;
@@ -90,7 +90,7 @@ body {
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background: radial-gradient(ellipse at 50% 42%, transparent 55%, rgba(0, 0, 0, 0.34) 100%);
+  background: radial-gradient(ellipse at 50% 42%, transparent 60%, rgba(0, 0, 0, 0.1) 100%);
 }
 
 /* ---------- header chrome ---------- */
@@ -365,7 +365,7 @@ a.curio-index-link:hover {
 
 .curio-sec-body {
   font-size: 13.5px;
-  color: #c9c9ce;
+  color: #3a3a3c;
   margin: 0 0 14px;
   max-width: 52ch;
 }
@@ -406,7 +406,7 @@ a.curio-index-link:hover {
   margin: 0;
   padding: 0 12px 12px;
   font-size: 13px;
-  color: #c9c9ce;
+  color: #3a3a3c;
   max-width: 60ch;
 }
 
@@ -679,7 +679,7 @@ a.curio-index-link:hover {
 }
 
 .curio-fallback a {
-  color: var(--curio-text);
+  color: var(--curio-accent);
 }
 
 .curio-retry {

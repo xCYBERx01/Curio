@@ -37,12 +37,12 @@ export function CurioCanvas() {
           }}
           onCreated={({ gl }) => {
             gl.toneMapping = THREE.ACESFilmicToneMapping
-            gl.toneMappingExposure = 1.1
+            gl.toneMappingExposure = 1.0
           }}
           aria-label="Curio 3D journey. Scroll to travel; use the rail or index for keyboard access."
         >
-          <color attach="background" args={['#0a0a0b']} />
-          <fog attach="fog" args={['#0a0a0b', 14, 30]} />
+          <color attach="background" args={['#f5f5f7']} />
+          <fog attach="fog" args={['#f5f5f7', 16, 32]} />
           <Suspense fallback={null}>
             <Scene />
           </Suspense>

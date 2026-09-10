@@ -120,7 +120,7 @@ export function RobotArm() {
         </mesh>
         <mesh rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[0.15, 0.022, 8, 32]} />
-          <meshBasicMaterial color="#ff4d00" toneMapped={false} />
+          <meshBasicMaterial color="#0071e3" toneMapped={false} />
         </mesh>
 
         <group ref={shoulder} position={[0, 0.02, 0]}>
@@ -137,7 +137,7 @@ export function RobotArm() {
             </mesh>
             <mesh rotation={[Math.PI / 2, 0, 0]}>
               <torusGeometry args={[0.12, 0.018, 8, 32]} />
-              <meshBasicMaterial color="#ff4d00" toneMapped={false} />
+              <meshBasicMaterial color="#0071e3" toneMapped={false} />
             </mesh>
             <mesh position={[0, L2 / 2, 0]}>
               <boxGeometry args={[0.12, L2, 0.12]} />
@@ -150,11 +150,11 @@ export function RobotArm() {
             </mesh>
             <mesh ref={fingerL} position={[-0.09, L2 + 0.16, 0]}>
               <boxGeometry args={[0.045, 0.2, 0.06]} />
-              <meshStandardMaterial color="#3a3a44" roughness={0.35} metalness={0.85} />
+              <meshStandardMaterial color="#8e8e93" roughness={0.3} metalness={0.9} />
             </mesh>
             <mesh ref={fingerR} position={[0.09, L2 + 0.16, 0]}>
               <boxGeometry args={[0.045, 0.2, 0.06]} />
-              <meshStandardMaterial color="#3a3a44" roughness={0.35} metalness={0.85} />
+              <meshStandardMaterial color="#8e8e93" roughness={0.3} metalness={0.9} />
             </mesh>
           </group>
         </group>
@@ -163,7 +163,7 @@ export function RobotArm() {
       {/* Bay glow */}
       <mesh position={[0, 0.07, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[0.85, 40]} />
-        <meshBasicMaterial ref={glowMat} color="#ff4d00" transparent opacity={0.04} depthWrite={false} toneMapped={false} />
+        <meshBasicMaterial ref={glowMat} color="#0071e3" transparent opacity={0.04} depthWrite={false} toneMapped={false} />
       </mesh>
     </group>
   )

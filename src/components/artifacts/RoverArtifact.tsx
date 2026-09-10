@@ -55,7 +55,7 @@ export function RoverArtifact() {
       </mesh>
       <mesh position={[x > 0 ? 0.11 : -0.11, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
         <cylinderGeometry args={[0.1, 0.1, 0.02, 12]} />
-        <meshStandardMaterial color="#3a3a44" roughness={0.4} metalness={0.8} />
+        <meshStandardMaterial color="#6e6e73" roughness={0.35} metalness={0.85} />
       </mesh>
     </group>
   )
@@ -103,7 +103,7 @@ export function RoverArtifact() {
         </mesh>
         <mesh position={[0, 0, 0.13]}>
           <sphereGeometry args={[0.055, 12, 12]} />
-          <meshBasicMaterial ref={lensMat} color="#ff4d00" transparent opacity={0.7} toneMapped={false} />
+          <meshBasicMaterial ref={lensMat} color="#0071e3" transparent opacity={0.7} toneMapped={false} />
         </mesh>
       </group>
 
@@ -122,7 +122,7 @@ export function RoverArtifact() {
       {/* Underglow */}
       <mesh position={[0, 0.075, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[1.7, 1.2]} />
-        <meshBasicMaterial ref={glowMat} color="#ff4d00" transparent opacity={0.05} depthWrite={false} toneMapped={false} />
+        <meshBasicMaterial ref={glowMat} color="#0071e3" transparent opacity={0.05} depthWrite={false} toneMapped={false} />
       </mesh>
     </group>
   )
