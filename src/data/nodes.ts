@@ -35,8 +35,8 @@ export interface CurioNodeSpec {
 
 export const MIN_NODE_SEPARATION = 2.2
 
-export const OVERVIEW_POSITION: Vec3 = [0, 3.6, 9.4]
-export const OVERVIEW_LOOK_AT: Vec3 = [0, 1.0, -1.4]
+export const OVERVIEW_POSITION: Vec3 = [0, 3.2, 9.0]
+export const OVERVIEW_LOOK_AT: Vec3 = [0, 0.9, -1.4]
 
 export const NODES: CurioNodeSpec[] = [
   // ---- featured arc ----

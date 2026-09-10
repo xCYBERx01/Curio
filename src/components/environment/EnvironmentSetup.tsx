@@ -22,22 +22,23 @@ export function EnvironmentSetup() {
     const t = state.clock.elapsedTime
     if (!reducedMotion) {
       sweep.current.rotation.y += dt * 0.12
-      const target = 0.5 + Math.sin(t * 0.6) * 0.05
+      const target = 0.78 + Math.sin(t * 0.6) * 0.06
       ambient.current.intensity += (target - ambient.current.intensity) * Math.min(1, dt * 2)
     }
   })
 
   return (
     <group>
-      {/* Base + key + rim: depth first, decoration never. */}
-      <ambientLight ref={ambient} intensity={0.5} color="#dfe2ea" />
-      <directionalLight position={[4.5, 7, 3.5]} intensity={1.35} color="#f4f1e8" />
-      <directionalLight position={[-6, 3.5, -4.5]} intensity={0.35} color="#b9c4d6" />
+      {/* Base + key + rim + sky bounce: legibility first. */}
+      <ambientLight ref={ambient} intensity={0.78} color="#dfe2ea" />
+      <hemisphereLight args={['#cfd4e6', '#0a0a0b', 0.55]} />
+      <directionalLight position={[4.5, 7, 3.5]} intensity={1.7} color="#f4f1e8" />
+      <directionalLight position={[-6, 3.5, -4.5]} intensity={0.5} color="#b9c4d6" />
 
-      {/* Floor: near-black disc so the grid has something to sit on. */}
+      {/* Floor: lifted so the grid and furniture read on screen. */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, 0]}>
         <circleGeometry args={[11, 64]} />
-        <meshStandardMaterial color="#0c0c0e" roughness={0.96} metalness={0} />
+        <meshStandardMaterial color="#131316" roughness={0.94} metalness={0} />
       </mesh>
 
       {/* Technical grid — the only "marking" layer. Simplified on compact. */}
@@ -45,11 +46,11 @@ export function EnvironmentSetup() {
         position={[0, 0, 0]}
         args={[22, 22]}
         cellSize={compact ? 1.2 : 0.6}
-        cellThickness={0.6}
-        cellColor="#1b1b21"
+        cellThickness={0.8}
+        cellColor="#2a2a33"
         sectionSize={3}
-        sectionThickness={1}
-        sectionColor="#2b2b34"
+        sectionThickness={1.2}
+        sectionColor="#43434f"
         fadeDistance={19}
         fadeStrength={2.2}
         followCamera={false}

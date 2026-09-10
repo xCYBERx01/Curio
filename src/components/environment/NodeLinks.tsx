@@ -5,7 +5,7 @@ import { NODES } from '../../data/nodes.ts'
 import { useCurioStore } from '../../store/useCurioStore.ts'
 
 const HUB_ID = 'identity'
-const LINK_BASE = new THREE.Color('#4a4a55')
+const LINK_BASE = new THREE.Color('#5c5c68')
 const LINK_HOT = new THREE.Color('#ff4d00')
 
 interface Spoke {
@@ -36,7 +36,7 @@ export function NodeLinks() {
       const material = new THREE.LineBasicMaterial({
         color: LINK_BASE.clone(),
         transparent: true,
-        opacity: 0.1,
+        opacity: 0.14,
         toneMapped: false,
       })
       return { id: n.id, line: new THREE.Line(geometry, material), material }
@@ -59,7 +59,7 @@ export function NodeLinks() {
     const active = useCurioStore.getState().activeNodeId
     for (const s of spokes) {
       const hot = active !== null && (active === s.id || active === HUB_ID)
-      const targetOpacity = active === null ? 0.1 : hot ? 0.65 : 0.035
+      const targetOpacity = active === null ? 0.14 : hot ? 0.7 : 0.04
       s.material.opacity += (targetOpacity - s.material.opacity) * k
       s.material.color.lerp(hot ? LINK_HOT : LINK_BASE, k)
     }

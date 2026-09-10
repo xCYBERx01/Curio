@@ -11,10 +11,10 @@ import { usePrefersReducedMotion } from '../../hooks/useCurio.ts'
 export type NodeVisualState = 'idle' | 'hover' | 'active' | 'inactive' | 'disabled'
 
 const ACCENT = new THREE.Color('#ff4d00')
-const BASE = new THREE.Color('#17171c')
-const DIM = new THREE.Color('#0e0e11')
-const IDLE_EMISSIVE = new THREE.Color('#2b2b33')
-const HOVER_EMISSIVE = new THREE.Color('#7a7a86')
+const BASE = new THREE.Color('#2b2b33')
+const DIM = new THREE.Color('#17171c')
+const IDLE_EMISSIVE = new THREE.Color('#45454f')
+const HOVER_EMISSIVE = new THREE.Color('#8a8a96')
 
 /* ------------------------------------------------------------------ */
 /* Error boundary: a broken GLB must never break the scene.            */
@@ -212,7 +212,7 @@ export function CurioNode({ spec, order }: { spec: CurioNodeSpec; order: number 
     if (coreMat.current) {
       coreMat.current.color.lerp(inactive ? DIM : BASE, k)
       coreMat.current.emissive.lerp(active ? ACCENT : hovered ? HOVER_EMISSIVE : IDLE_EMISSIVE, k)
-      let targetGlow = active ? 1.15 : hovered ? 0.7 : 0.5
+      let targetGlow = active ? 1.25 : hovered ? 0.85 : 0.65
       if (!reducedMotion) targetGlow += Math.sin(t * 1.3 + phase * 6.283) * 0.08
       coreMat.current.emissiveIntensity = THREE.MathUtils.damp(
         coreMat.current.emissiveIntensity,
@@ -258,11 +258,11 @@ export function CurioNode({ spec, order }: { spec: CurioNodeSpec; order: number 
       <CoreGeometry id={spec.id} />
       <meshStandardMaterial
         ref={coreMat}
-        color="#17171c"
-        roughness={0.35}
-        metalness={0.8}
-        emissive="#2b2b33"
-        emissiveIntensity={0.5}
+        color="#2b2b33"
+        roughness={0.32}
+        metalness={0.55}
+        emissive="#45454f"
+        emissiveIntensity={0.65}
       />
     </mesh>
   )
@@ -301,8 +301,8 @@ export function CurioNode({ spec, order }: { spec: CurioNodeSpec; order: number 
         <Html
           position={[0, 0.95, 0]}
           center
-          distanceFactor={8}
-          zIndexRange={[15, 0]}
+          distanceFactor={7}
+          zIndexRange={[40, 20]}
           wrapperClass="curio-node-label"
           pointerEvents="none"
         >
@@ -320,12 +320,12 @@ export function CurioNode({ spec, order }: { spec: CurioNodeSpec; order: number 
       {/* Survey mast: thin drop-line grounding the floating core. */}
       <mesh position={[0, (floorY - 0.35) / 2, 0]}>
         <cylinderGeometry args={[0.008, 0.008, Math.max(0.1, spec.position[1] - 0.35), 6]} />
-        <meshBasicMaterial color={active ? '#ff4d00' : '#33333c'} toneMapped={false} />
+        <meshBasicMaterial color={active ? '#ff4d00' : '#4a4a55'} toneMapped={false} />
       </mesh>
 
       {/* Survey pulse dot — animated in useFrame. */}
       <mesh ref={pulseMesh} position={[0, -0.25, 0]} visible={false}>
-        <sphereGeometry args={[0.035, 10, 10]} />
+        <sphereGeometry args={[0.045, 10, 10]} />
         <meshBasicMaterial ref={pulseMat} color="#ff4d00" transparent opacity={0} toneMapped={false} />
       </mesh>
 
