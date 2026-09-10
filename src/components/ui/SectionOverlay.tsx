@@ -125,6 +125,7 @@ export function SectionOverlay() {
             <p className="curio-sec-kicker curio-anim">{spec.kicker}</p>
             <h2 className="curio-sec-title curio-anim">{spec.title}</h2>
             <ProjectBody id={spec.projectId} />
+            {spec.credit && <p className="curio-credit curio-anim">{spec.credit}</p>}
           </>
         )}
 
@@ -142,8 +143,7 @@ export function SectionOverlay() {
             <h2 className="curio-sec-title curio-anim">{spec.title}</h2>
             <ProjectBody id={spec.projectId} />
             <div className="curio-archive curio-anim">
-              <h3>ARCHIVE — EVERY BUILD</h3>
-              <ul>
+              <h3>ARCHIVE — EVERY BUILD</h3>              <ul>
                 {ARCHIVE_IDS.map((id, i) => {
                   const p = PROJECTS[id]
                   const href = p.links.find((l) => isSafeHref(l.href))?.href

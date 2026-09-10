@@ -1,12 +1,12 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { TURNTABLE_RADIUS, stageAngleFor } from '../../data/sections.ts'
+import { SECTION_MAP, TURNTABLE_RADIUS, stageAngleFor } from '../../data/sections.ts'
 import { scrollState } from '../../lib/scroll.ts'
 import { usePrefersReducedMotion } from '../../hooks/useCurio.ts'
 import { CrocDevice } from './CrocDevice.tsx'
-import { RoverArtifact } from './RoverArtifact.tsx'
-import { RobotArm } from './RobotArm.tsx'
+import { RoverShowcase } from './RoverArtifact.tsx'
+import { ArmShowcase } from './RobotArm.tsx'
 
 const SLOT_ANGLE = (Math.PI * 2) / 3
 
@@ -26,9 +26,9 @@ export function TurntableStage() {
   })
 
   const slots = [
-    { angle: 0, content: <CrocDevice /> },
-    { angle: SLOT_ANGLE, content: <RoverArtifact /> },
-    { angle: SLOT_ANGLE * 2, content: <RobotArm /> },
+    { angle: 0, content: <CrocDevice assetUrl={SECTION_MAP.croc.assetUrl ?? null} /> },
+    { angle: SLOT_ANGLE, content: <RoverShowcase assetUrl={SECTION_MAP.voltedge.assetUrl ?? null} /> },
+    { angle: SLOT_ANGLE * 2, content: <ArmShowcase assetUrl={SECTION_MAP.arm.assetUrl ?? null} /> },
   ]
 
   return (

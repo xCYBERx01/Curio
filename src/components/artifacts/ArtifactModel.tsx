@@ -1,6 +1,7 @@
 import { Component, Suspense, useMemo } from 'react'
 import type { ReactNode } from 'react'
 import { useGLTF } from '@react-three/drei'
+import * as THREE from 'three'
 
 /**
  * Reusable GLB layer: cached via useGLTF, cloned per instance, preloaded
@@ -38,17 +39,48 @@ function Model({ url }: { url: string }) {
   return <primitive object={scene} />
 }
 
+/**
+ * Auto-fitted presentation: normalizes any GLB to `height` units tall
+ * and grounds it at the group origin — blind-safe for models whose
+ * proportions were authored elsewhere.
+ */
+export function FittedArtifactModel({ url, height = 1.6 }: { url: string; height?: number }) {
+  const gltf = useGLTF(url)
+  const scene = useMemo(() => {
+    const cloned = gltf.scene.clone()
+    const box = new THREE.Box3().setFromObject(cloned)
+    const size = box.getSize(new THREE.Vector3())
+    const center = box.getCenter(new THREE.Vector3())
+    const s = height / Math.max(size.x, size.y, size.z, 0.001)
+    cloned.scale.setScalar(s)
+    cloned.position.set(-center.x * s, -box.min.y * s, -center.z * s)
+    return cloned
+  }, [gltf, height])
+  return <primitive object={scene} />
+}
+
 export function preloadArtifactAsset(url: string | null): void {
   if (url) useGLTF.preload(url)
 }
 
-/** Renders `url` when set, otherwise the procedural `fallback` directly. */
-export function ArtifactModel({ url, fallback }: { url: string | null; fallback: ReactNode }) {
+/**
+ * Renders `url` when set, otherwise the procedural `fallback` directly.
+ * `fitHeight` normalizes the model to a target height instead of raw clone.
+ */
+export function ArtifactModel({
+  url,
+  fallback,
+  fitHeight = null,
+}: {
+  url: string | null
+  fallback: ReactNode
+  fitHeight?: number | null
+}) {
   if (!url) return <>{fallback}</>
   return (
     <ArtifactErrorBoundary fallback={fallback}>
       <Suspense fallback={fallback}>
-        <Model url={url} />
+        {fitHeight ? <FittedArtifactModel url={url} height={fitHeight} /> : <Model url={url} />}
       </Suspense>
     </ArtifactErrorBoundary>
   )

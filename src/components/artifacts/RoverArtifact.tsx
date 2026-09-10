@@ -7,6 +7,7 @@ import { PROJECT_SLOT, slotProximity } from '../../data/sections.ts'
 import { scrollState } from '../../lib/scroll.ts'
 import { useCurioStore } from '../../store/useCurioStore.ts'
 import { usePrefersReducedMotion } from '../../hooks/useCurio.ts'
+import { ArtifactModel } from './ArtifactModel.tsx'
 
 /**
  * VoltEdge artifact: a believable competition rover — dual-layer chassis,
@@ -14,7 +15,7 @@ import { usePrefersReducedMotion } from '../../hooks/useCurio.ts'
  * rear aero wing, faint underglow that breathes with section proximity.
  * Clicking travels to the VOLTEDGE stop.
  */
-export function RoverArtifact() {
+export function RoverArtifact({ bare = false }: { bare?: boolean }) {
   const reducedMotion = usePrefersReducedMotion()
   const pointer = useThree((s) => s.pointer)
   const wheels = useRef<(THREE.Group | null)[]>([])
@@ -119,9 +120,54 @@ export function RoverArtifact() {
         </mesh>
       ))}
 
-      {/* Underglow */}
-      <mesh position={[0, 0.075, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[1.7, 1.2]} />
+      {/* Underglow (showcase provides its own when nested) */}
+      {!bare && (
+        <mesh position={[0, 0.075, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[1.7, 1.2]} />
+          <meshBasicMaterial ref={glowMat} color="#0071e3" transparent opacity={0.05} depthWrite={false} toneMapped={false} />
+        </mesh>
+      )}
+    </group>
+  )
+}
+
+/**
+ * Rover bay: drops in the NRL bot GLB the moment its `assetUrl` is set
+ * (export the Onshape assembly as .glb → /public/models/nrlbot.glb),
+ * procedural rover until then. Same showcase contract as the arm bay.
+ */
+export function RoverShowcase({ assetUrl = null }: { assetUrl?: string | null }) {
+  const reducedMotion = usePrefersReducedMotion()
+  const spinner = useRef<THREE.Group>(null!)
+  const glowMat = useRef<THREE.MeshBasicMaterial>(null!)
+
+  useFrame((_state, rawDt) => {
+    const dt = Math.min(rawDt, 0.05)
+    if (!reducedMotion) spinner.current.rotation.y += dt * 0.3
+    const prox = slotProximity(scrollState.float, PROJECT_SLOT.voltedge)
+    if (glowMat.current) glowMat.current.opacity = 0.05 + prox * 0.2
+  })
+
+  return (
+    <group
+      onPointerDown={(e) => e.stopPropagation()}
+      onClick={(e) => {
+        e.stopPropagation()
+        useCurioStore.getState().goToSection(3)
+      }}
+      onPointerOver={(e) => {
+        e.stopPropagation()
+        document.body.style.cursor = 'pointer'
+      }}
+      onPointerOut={() => {
+        document.body.style.cursor = ''
+      }}
+    >
+      <group ref={spinner}>
+        <ArtifactModel url={assetUrl} fallback={<RoverArtifact bare />} fitHeight={1.7} />
+      </group>
+      <mesh position={[0, 0.07, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[1.9, 1.4]} />
         <meshBasicMaterial ref={glowMat} color="#0071e3" transparent opacity={0.05} depthWrite={false} toneMapped={false} />
       </mesh>
     </group>

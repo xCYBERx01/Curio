@@ -1,9 +1,11 @@
+import { useEffect } from 'react'
 import { CurioCanvas } from '../components/canvas/CurioCanvas.tsx'
 import { Chrome } from '../components/ui/Chrome.tsx'
 import { LoadScreen } from '../components/ui/LoadScreen.tsx'
 import { ScrollRail } from '../components/ui/ScrollRail.tsx'
 import { SectionOverlay } from '../components/ui/SectionOverlay.tsx'
-import { ARCHIVE_IDS, STOP_COUNT } from '../data/sections.ts'
+import { preloadArtifactAsset } from '../components/artifacts/ArtifactModel.tsx'
+import { ARCHIVE_IDS, SECTIONS, STOP_COUNT } from '../data/sections.ts'
 import { IDENTITY_CONTENT, PROJECTS } from '../data/projects.ts'
 import { useCompactViewport, useCurioKeyboard, useScrollDriver } from '../hooks/useCurio.ts'
 
@@ -17,6 +19,11 @@ export default function App() {
   useCompactViewport()
   useScrollDriver()
   useCurioKeyboard()
+
+  // Warm the GLB cache so bay models appear without a pop-in mid-journey.
+  useEffect(() => {
+    for (const s of SECTIONS) preloadArtifactAsset(s.assetUrl ?? null)
+  }, [])
 
   return (
     <div className="curio-root">

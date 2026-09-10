@@ -6,6 +6,7 @@ import { PROJECT_SLOT, slotProximity } from '../../data/sections.ts'
 import { scrollState } from '../../lib/scroll.ts'
 import { useCurioStore } from '../../store/useCurioStore.ts'
 import { usePrefersReducedMotion } from '../../hooks/useCurio.ts'
+import { ArtifactModel } from './ArtifactModel.tsx'
 
 const L1 = 0.62
 const L2 = 0.55
@@ -17,7 +18,7 @@ const SHOULDER_Y = 0.44
  * live. Clicking the arm when already focused triggers one wave cycle —
  * the single memorable interaction. Otherwise click travels to the ARM stop.
  */
-export function RobotArm() {
+export function RobotArm({ bare = false }: { bare?: boolean }) {
   const reducedMotion = usePrefersReducedMotion()
   const pointer = useThree((s) => s.pointer)
 
@@ -102,11 +103,13 @@ export function RobotArm() {
         document.body.style.cursor = ''
       }}
     >
-      {/* Pedestal + turret */}
-      <mesh position={[0, 0.09, 0]}>
-        <cylinderGeometry args={[0.32, 0.38, 0.18, 24]} />
-        <meshStandardMaterial color="#141417" roughness={0.6} metalness={0.4} />
-      </mesh>
+      {/* Pedestal + turret (skipped when nested in a showcase with its own) */}
+      {!bare && (
+        <mesh position={[0, 0.09, 0]}>
+          <cylinderGeometry args={[0.32, 0.38, 0.18, 24]} />
+          <meshStandardMaterial color="#141417" roughness={0.6} metalness={0.4} />
+        </mesh>
+      )}
       <mesh position={[0, 0.28, 0]}>
         <cylinderGeometry args={[0.22, 0.26, 0.22, 24]} />
         <meshStandardMaterial color="#1c1c22" {...metal} />
@@ -160,9 +163,59 @@ export function RobotArm() {
         </group>
       </group>
 
-      {/* Bay glow */}
+      {/* Bay glow (showcase provides its own when nested) */}
+      {!bare && (
+        <mesh position={[0, 0.07, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <circleGeometry args={[0.85, 40]} />
+          <meshBasicMaterial ref={glowMat} color="#0071e3" transparent opacity={0.04} depthWrite={false} toneMapped={false} />
+        </mesh>
+      )}
+    </group>
+  )
+}
+
+/**
+ * Arm bay: real GLB showcase when `assetUrl` is set (slow turntable
+ * flourish + bay glow + click-to-travel), procedural interactive arm
+ * as the fallback. A broken/missing GLB never empties the bay.
+ */
+export function ArmShowcase({ assetUrl = null }: { assetUrl?: string | null }) {
+  const reducedMotion = usePrefersReducedMotion()
+  const spinner = useRef<THREE.Group>(null!)
+  const glowMat = useRef<THREE.MeshBasicMaterial>(null!)
+
+  useFrame((_state, rawDt) => {
+    const dt = Math.min(rawDt, 0.05)
+    if (!reducedMotion) spinner.current.rotation.y += dt * 0.35
+    const prox = slotProximity(scrollState.float, PROJECT_SLOT.arm)
+    if (glowMat.current) glowMat.current.opacity = 0.04 + prox * 0.16
+  })
+
+  return (
+    <group
+      onPointerDown={(e) => e.stopPropagation()}
+      onClick={(e) => {
+        e.stopPropagation()
+        useCurioStore.getState().goToSection(4)
+      }}
+      onPointerOver={(e) => {
+        e.stopPropagation()
+        document.body.style.cursor = 'pointer'
+      }}
+      onPointerOut={() => {
+        document.body.style.cursor = ''
+      }}
+    >
+      {/* Pedestal shared by both paths */}
+      <mesh position={[0, 0.09, 0]}>
+        <cylinderGeometry args={[0.34, 0.4, 0.18, 24]} />
+        <meshStandardMaterial color="#141417" roughness={0.6} metalness={0.4} />
+      </mesh>
+      <group ref={spinner} position={[0, 0.18, 0]}>
+        <ArtifactModel url={assetUrl} fallback={<RobotArm bare />} fitHeight={1.6} />
+      </group>
       <mesh position={[0, 0.07, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[0.85, 40]} />
+        <circleGeometry args={[0.95, 40]} />
         <meshBasicMaterial ref={glowMat} color="#0071e3" transparent opacity={0.04} depthWrite={false} toneMapped={false} />
       </mesh>
     </group>

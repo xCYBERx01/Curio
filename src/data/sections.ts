@@ -29,6 +29,10 @@ export interface SectionSpec {
   title: string
   /** Project record backing this section's copy, if any. */
   projectId?: string
+  /** GLB under /public for the bay artifact. Null = procedural build. */
+  assetUrl?: string | null
+  /** Attribution line for a third-party model (license honesty). */
+  credit?: string
 }
 
 export const SECTIONS: SectionSpec[] = [
@@ -36,7 +40,7 @@ export const SECTIONS: SectionSpec[] = [
   { id: 'ahmed', stop: 1, nav: '01 AHMED', kicker: '01 — IDENTITY', title: 'Ahmed', projectId: 'identity' },
   { id: 'croc', stop: 2, nav: '02 CROC OS', kicker: '02 — EMBEDDED COMPANION', title: 'CROC OS', projectId: 'croc-os' },
   { id: 'voltedge', stop: 3, nav: '03 VOLTEDGE', kicker: '03 — COMPETITION ROBOTICS', title: 'VoltEdge', projectId: 'voltedge' },
-  { id: 'arm', stop: 4, nav: '04 ARM 5-DOF', kicker: '04 — MANIPULATOR', title: '5-DOF Arm', projectId: 'arm-5dof' },
+  { id: 'arm', stop: 4, nav: '04 ARM 5-DOF', kicker: '04 — MANIPULATOR', title: '5-DOF Arm', projectId: 'arm-5dof', assetUrl: '/models/robo-arm.glb', credit: 'Bay model: “Robot Arm” by m m · CC-BY via Poly Pizza' },
   { id: 'interests', stop: 5, nav: '05 INTERESTS', kicker: '05 — TECHNICAL INTERESTS', title: 'Interests', projectId: 'interests' },
   { id: 'contact', stop: 6, nav: '06 CONTACT', kicker: '06 — CONTACT', title: 'Contact', projectId: 'contact' },
 ]

@@ -456,6 +456,14 @@ a.curio-index-link:hover {
   letter-spacing: 0.04em;
 }
 
+.curio-credit {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--curio-faint);
+  margin: 10px 0 0;
+}
+
 /* Archive list (contact stop): every build, one line each. */
 .curio-archive {
   margin-top: 16px;
