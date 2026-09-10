@@ -1,19 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import { animate } from 'animejs'
-import { GROUP_LABELS, GROUP_ORDER, NODES } from '../../data/nodes.ts'
-import type { NodeGroup } from '../../data/nodes.ts'
+import { ARCHIVE_IDS, NAV_SECTIONS, SECTION_MAP } from '../../data/sections.ts'
+import { PROJECTS } from '../../data/projects.ts'
+import { isSafeHref } from '../../lib/links.ts'
 import { useCurioStore } from '../../store/useCurioStore.ts'
 import { usePrefersReducedMotion } from '../../hooks/useCurio.ts'
 
 /**
- * Full site index: every node grouped by discipline. The keyboard and
- * touch path to non-featured nodes (and the primary nav on mobile, where
- * the header row is hidden). Local useState — this is transient UI state,
- * not global selection state.
+ * Secondary navigation: journey stops plus the full project archive.
+ * Transient open-state stays local; destinations go through the store.
  */
 export function SiteIndex() {
   const [open, setOpen] = useState(false)
-  const activeNodeId = useCurioStore((s) => s.activeNodeId)
+  const activeSection = useCurioStore((s) => s.activeSection)
   const reducedMotion = usePrefersReducedMotion()
   const panelRef = useRef<HTMLDivElement>(null)
 
@@ -30,12 +29,7 @@ export function SiteIndex() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [open ])
-
-  const groups = GROUP_ORDER.map((g: NodeGroup) => ({
-    group: g,
-    nodes: NODES.filter((n) => (g === 'featured' ? n.featured : n.group === g && !n.featured)),
-  })).filter((g) => g.nodes.length > 0)
+  }, [open])
 
   return (
     <div className="curio-index">
@@ -51,29 +45,50 @@ export function SiteIndex() {
       </button>
       {open && (
         <div ref={panelRef} id="curio-site-index" className="curio-index-panel" role="dialog" aria-label="Full site index">
-          {groups.map(({ group, nodes }) => (
-            <section key={group} className="curio-index-group">
-              <h3>{GROUP_LABELS[group].toUpperCase()}</h3>
-              <ul>
-                {nodes.map((n) => (
-                  <li key={n.id}>
-                    <button
-                      type="button"
-                      data-node-btn={n.id}
-                      aria-pressed={activeNodeId === n.id}
-                      onClick={() => {
-                        useCurioStore.getState().selectNode(n.id)
-                        setOpen(false)
-                      }}
-                    >
-                      <span className="idx">{n.index}</span>
-                      <span>{n.short.toUpperCase()}</span>
-                    </button>
+          <section className="curio-index-group">
+            <h3>JOURNEY</h3>
+            <ul>
+              {NAV_SECTIONS.map((s) => (
+                <li key={s.id}>
+                  <button
+                    type="button"
+                    aria-current={activeSection === s.id ? 'true' : undefined}
+                    onClick={() => {
+                      useCurioStore.getState().goToSection(s.stop)
+                      setOpen(false)
+                    }}
+                  >
+                    <span className="idx">{s.nav?.split(' ')[0]}</span>
+                    <span>{s.title.toUpperCase()}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+          <section className="curio-index-group">
+            <h3>ARCHIVE</h3>
+            <ul>
+              {ARCHIVE_IDS.map((id, i) => {
+                const p = PROJECTS[id]
+                const href = p.links.find((l) => isSafeHref(l.href))?.href
+                const label = `${String(i + 1).padStart(2, '0')} — ${p.tagline}`
+                return (
+                  <li key={id}>
+                    {href ? (
+                      <a className="curio-index-link" href={href} target="_blank" rel="noreferrer">
+                        {label}
+                      </a>
+                    ) : (
+                      <span className="curio-index-link">{label}</span>
+                    )}
                   </li>
-                ))}
-              </ul>
-            </section>
-          ))}
+                )
+              })}
+            </ul>
+          </section>
+          <p className="curio-index-note">
+            {SECTION_MAP[activeSection].nav ?? 'INTRO'} — {SECTION_MAP[activeSection].title.toUpperCase()}
+          </p>
         </div>
       )}
     </div>

@@ -1,16 +1,16 @@
 import { Suspense, useMemo } from 'react'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
-import { OVERVIEW_POSITION } from '../../data/nodes.ts'
 import { isWebGLAvailable } from '../../lib/platform.ts'
 import { useCurioStore } from '../../store/useCurioStore.ts'
 import { WebGLFallback } from '../ui/WebGLFallback.tsx'
 import { CanvasErrorBoundary } from './CanvasErrorBoundary.tsx'
-import { SceneRoot } from './SceneRoot.tsx'
+import { Scene } from './Scene.tsx'
 
 /**
- * CurioCanvas — the 3D layer. Owns renderer, background, fog and the
- * background-deselect contract (onPointerMissed). All DOM lives outside.
+ * CurioCanvas — the 3D layer. Owns renderer, background and fog.
+ * Scroll drives the journey; artifact clicks navigate explicitly with
+ * stopPropagation. All DOM lives outside.
  */
 export function CurioCanvas() {
   const compact = useCurioStore((s) => s.compact)
@@ -30,27 +30,21 @@ export function CurioCanvas() {
             stencil: false,
           }}
           camera={{
-            position: [...OVERVIEW_POSITION],
-            fov: compact ? 48 : 40,
+            position: [0, 3.6, 12.0],
+            fov: compact ? 46 : 38,
             near: 0.1,
-            far: 60,
+            far: 70,
           }}
           onCreated={({ gl }) => {
             gl.toneMapping = THREE.ACESFilmicToneMapping
-            gl.toneMappingExposure = 1.05
+            gl.toneMappingExposure = 1.1
           }}
-          // Background click (missed every mesh) deselects. Node presses
-          // stopPropagation, so they can never trigger this path.
-          onPointerMissed={(event) => {
-            if (event.button !== 0) return
-            useCurioStore.getState().clearSelection()
-          }}
-          aria-label="Curio 3D scene. Use the index buttons above for keyboard access."
+          aria-label="Curio 3D journey. Scroll to travel; use the rail or index for keyboard access."
         >
           <color attach="background" args={['#0a0a0b']} />
-          <fog attach="fog" args={['#0a0a0b', 11, 27]} />
+          <fog attach="fog" args={['#0a0a0b', 14, 30]} />
           <Suspense fallback={null}>
-            <SceneRoot />
+            <Scene />
           </Suspense>
         </Canvas>
         <div className="curio-vignette" aria-hidden="true" />

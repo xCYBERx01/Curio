@@ -1,5 +1,6 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
-import { NODES } from '../data/nodes.ts'
+import { SECTIONS } from '../data/sections.ts'
+import { syncScrollState } from '../lib/scroll.ts'
 import { useCurioStore } from '../store/useCurioStore.ts'
 
 function matchQuery(query: string): boolean {
@@ -13,7 +14,7 @@ function subscribeToQuery(query: string, onChange: () => void): () => void {
   return () => mql.removeEventListener('change', onChange)
 }
 
-/** Tracks `(prefers-reduced-motion: reduce)` — transitions go short/instant. */
+/** Tracks `(prefers-reduced-motion: reduce)` — motion goes short/instant. */
 export function usePrefersReducedMotion(): boolean {
   const value = useSyncExternalStore(
     (cb) => subscribeToQuery('(prefers-reduced-motion: reduce)', cb),
@@ -25,10 +26,7 @@ export function usePrefersReducedMotion(): boolean {
 
 const COMPACT_QUERY = '(max-width: 860px), (pointer: coarse) and (max-width: 1024px)'
 
-/**
- * Compact-viewport flag. Mirrors into the Zustand store so the camera rig
- * and hit areas can react without every 3D component adding listeners.
- */
+/** Compact-viewport flag mirrored into the store for camera + DOM density. */
 export function useCompactViewport(): boolean {
   const [compact, setCompact] = useState(() => matchQuery(COMPACT_QUERY))
   const setStoreCompact = useCurioStore((s) => s.setCompact)
@@ -47,28 +45,54 @@ export function useCompactViewport(): boolean {
 }
 
 /**
- * Global keyboard navigation: Escape closes focus, [ / ] (or arrows) step
- * through nodes in index order, Enter on a focused overview does nothing.
- * Node buttons in the header provide the equivalent pointer path.
+ * Scroll driver: rAF-throttled scroll listener. Continuous progress lives
+ * in the mutable scrollState (read by the frame loop); discrete stop
+ * changes go through Zustand (drives DOM overlay, rail, header).
+ */
+export function useScrollDriver(): void {
+  useEffect(() => {
+    let queued = false
+    const onScroll = (): void => {
+      if (queued) return
+      queued = true
+      requestAnimationFrame(() => {
+        queued = false
+        const f = syncScrollState()
+        const stop = Math.min(SECTIONS.length - 1, Math.max(0, Math.round(f)))
+        useCurioStore.getState().setActiveSection(SECTIONS[stop].id)
+      })
+    }
+    syncScrollState()
+    const initial = Math.round(syncScrollState())
+    useCurioStore.getState().setActiveSection(SECTIONS[initial].id)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+}
+
+/**
+ * Keyboard journey: arrows step between stops, Escape returns to intro.
+ * Native scroll already moves the world; keys just request destinations.
  */
 export function useCurioKeyboard(): void {
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent): void => {
-      const { activeNodeId, selectNode, clearSelection } = useCurioStore.getState()
-      if (e.key === 'Escape') {
-        e.preventDefault()
-        clearSelection()
-        return
-      }
-      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' && e.key !== '[' && e.key !== ']') return
-      // Don't hijack typing in inputs.
       const target = e.target as HTMLElement | null
       if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return
-      e.preventDefault()
-      const forward = e.key === 'ArrowRight' || e.key === ']'
-      const current = NODES.findIndex((n) => n.id === activeNodeId)
-      const next = current === -1 ? (forward ? 0 : NODES.length - 1) : (current + (forward ? 1 : -1) + NODES.length) % NODES.length
-      selectNode(NODES[next].id)
+      const st = useCurioStore.getState()
+      const current = SECTIONS.findIndex((s) => s.id === st.activeSection)
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        st.goToSection(0)
+        return
+      }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ']') {
+        e.preventDefault()
+        st.goToSection(Math.min(SECTIONS.length - 1, current + 1))
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === '[') {
+        e.preventDefault()
+        st.goToSection(Math.max(0, current - 1))
+      }
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)

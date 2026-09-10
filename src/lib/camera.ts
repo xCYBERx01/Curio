@@ -1,64 +1,98 @@
+import * as THREE from 'three'
 import type { CameraPose, Vec3 } from '../store/useCurioStore.ts'
-import { OVERVIEW_LOOK_AT, OVERVIEW_POSITION } from '../data/nodes.ts'
+import { MOODS, POSE_ORDER, poseFor } from '../data/sections.ts'
+import type { Mood, SectionId } from '../data/sections.ts'
 
 /**
- * Deterministic camera poses. The ONLY place camera targets are computed —
- * CameraRig consumes them, nothing else moves the camera.
+ * Camera + mood sampling. Pure functions of the scroll float — the ONLY
+ * place camera targets are computed. The controller damps toward these.
  */
 
-const FOCUS_DISTANCE = 3.1
-const FOCUS_HEIGHT = 1.05
-const COMPACT_DISTANCE_BOOST = 1.35
+const _posA = new THREE.Vector3()
+const _posB = new THREE.Vector3()
+const _lookA = new THREE.Vector3()
+const _lookB = new THREE.Vector3()
 
-export function overviewPose(): CameraPose {
-  return {
-    position: [...OVERVIEW_POSITION] as Vec3,
-    lookAt: [...OVERVIEW_LOOK_AT] as Vec3,
-  }
+export function smoothstep(t: number): number {
+  const x = Math.min(1, Math.max(0, t))
+  return x * x * (3 - 2 * x)
 }
 
 /**
- * Focus pose for a node: pulled back toward the overview side so the node
- * keeps spatial context instead of filling the frame. Pure function of the
- * node position → deterministic, interruptible (rig always lerps from the
- * camera's *current* state toward the latest target).
+ * Interpolated pose between adjacent stops, plus a whisper of
+ * intra-stop drift so the camera never feels parked while scrolling.
+ * Reduced motion quantizes to whole stops (stepped, no glide).
  */
-export function focusPoseFor(nodePos: Vec3, compact = false): CameraPose {
-  const dist = FOCUS_DISTANCE + (compact ? COMPACT_DISTANCE_BOOST : 0)
+export function sampleCameraPose(
+  scrollFloat: number,
+  compact: boolean,
+  reducedMotion: boolean,
+  out: CameraPose,
+): void {
+  const f = reducedMotion ? Math.round(scrollFloat) : scrollFloat
+  const clamped = Math.min(POSE_ORDER.length - 1.001, Math.max(0, f))
+  const i = Math.floor(clamped)
+  const j = Math.min(POSE_ORDER.length - 1, i + 1)
+  const t = smoothstep(clamped - i)
 
-  // Horizontal direction from the node back toward the overview camera.
-  const dx = OVERVIEW_POSITION[0] - nodePos[0]
-  const dz = OVERVIEW_POSITION[2] - nodePos[2]
-  const len = Math.hypot(dx, dz) || 1
-  const nx = dx / len
-  const nz = dz / len
+  const a = poseFor(POSE_ORDER[i])
+  const b = poseFor(POSE_ORDER[j])
+  _posA.set(...a.position)
+  _posB.set(...b.position)
+  _lookA.set(...a.lookAt)
+  _lookB.set(...b.lookAt)
 
-  const px = nodePos[0] + nx * dist
-  const pz = nodePos[2] + nz * dist
-  const py = Math.max(0.9, nodePos[1] + FOCUS_HEIGHT * 0.55)
+  const pos = _posA.lerp(_posB, t)
+  const look = _lookA.lerp(_lookB, t)
 
-  return {
-    position: [px, py, pz],
-    lookAt: [nodePos[0], nodePos[1], nodePos[2]],
+  if (compact) {
+    // Pull back along the view axis for small viewports.
+    const dx = pos.x - look.x
+    const dy = pos.y - look.y
+    const dz = pos.z - look.z
+    pos.set(look.x + dx * 1.3, look.y + dy * 1.3 + 0.6, look.z + dz * 1.3)
   }
+
+  if (!reducedMotion) {
+    const frac = clamped - Math.floor(clamped)
+    pos.x += (frac - 0.5) * 0.5
+    pos.y += Math.sin(frac * Math.PI) * 0.15
+  }
+
+  out.position = [pos.x, pos.y, pos.z] as Vec3
+  out.lookAt = [look.x, look.y, look.z] as Vec3
 }
 
-/** True when the camera is close enough to its target to settle. */
-export function isPoseSettled(
-  currentPos: Vec3,
-  currentLook: Vec3,
-  target: CameraPose,
-  epsilon = 0.025,
-): boolean {
-  const dp = Math.hypot(
-    currentPos[0] - target.position[0],
-    currentPos[1] - target.position[1],
-    currentPos[2] - target.position[2],
-  )
-  const dl = Math.hypot(
-    currentLook[0] - target.lookAt[0],
-    currentLook[1] - target.lookAt[1],
-    currentLook[2] - target.lookAt[2],
-  )
-  return dp < epsilon && dl < epsilon
+const _colorA = new THREE.Color()
+const _colorB = new THREE.Color()
+
+export interface SampledMood {
+  keyIntensity: number
+  rimIntensity: number
+  ambientIntensity: number
+  /** Scratch color — copy out, never hold. */
+  keyColor: THREE.Color
+}
+
+const _scratch = new THREE.Color()
+
+function moodFor(id: SectionId): Mood {
+  return MOODS[id]
+}
+
+/** Blended lighting mood for a scroll float. */
+export function sampleMood(scrollFloat: number, out: SampledMood): void {
+  const clamped = Math.min(POSE_ORDER.length - 1.001, Math.max(0, scrollFloat))
+  const i = Math.floor(clamped)
+  const j = Math.min(POSE_ORDER.length - 1, i + 1)
+  const t = smoothstep(clamped - i)
+  const a = moodFor(POSE_ORDER[i])
+  const b = moodFor(POSE_ORDER[j])
+  out.keyIntensity = a.keyIntensity + (b.keyIntensity - a.keyIntensity) * t
+  out.rimIntensity = a.rimIntensity + (b.rimIntensity - a.rimIntensity) * t
+  out.ambientIntensity = a.ambientIntensity + (b.ambientIntensity - a.ambientIntensity) * t
+  _colorA.set(a.keyColor)
+  _colorB.set(b.keyColor)
+  _scratch.copy(_colorA).lerp(_colorB, t)
+  out.keyColor = _scratch
 }

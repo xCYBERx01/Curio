@@ -24,37 +24,37 @@ npm run preview
 
 ```text
 src/
-├── app/            App composition (3D layer + DOM layer, no logic)
+├── app/            App composition (viewport + scroll track, no logic)
 ├── components/
-│   ├── canvas/     CurioCanvas, SceneRoot, CanvasErrorBoundary
-│   ├── camera/     CameraRig — the SOLE owner of the camera
-│   ├── environment/EnvironmentSetup — lights, floor, technical grid
-│   ├── nodes/      CurioNode (reusable), AssetModel (GLB), NodeErrorBoundary
-│   └── ui/         Chrome, DetailPanel, LoadScreen, WebGLFallback
-├── data/           nodes.ts (spatial single source of truth)
+│   ├── canvas/     CurioCanvas, Scene, CanvasErrorBoundary
+│   ├── camera/     CameraController — the SOLE owner of the camera
+│   ├── environment/Environment — void, grid, sweep, scroll mood lighting
+│   ├── artifacts/  HeroCore, CrocDevice (+live OLED), RoverArtifact,
+│   │               RobotArm, TurntableStage, ArtifactModel (GLB layer)
+│   └── ui/         Chrome, SectionOverlay, ScrollRail, SiteIndex,
+│                   LoadScreen, WebGLFallback
+├── data/           sections.ts (journey single source of truth)
 │                   projects.ts (content — separated from rendering)
-├── store/          useCurioStore.ts (activeNode, cameraMode, targets…)
-├── hooks/          reduced-motion, compact viewport, keyboard nav
-├── lib/            camera poses (deterministic), WebGL probe
+├── store/          useCurioStore.ts (activeSection, ready, compact)
+├── hooks/          reduced-motion, compact viewport, scroll driver, keys
+├── lib/            camera/mood sampling, scroll state, links, WebGL probe
 └── styles/         tokens.css + global.css (DOM layer only)
 ```
 
 Key contracts:
 
-- **Add a project = edit data.** Append to `NODES` in `src/data/nodes.ts`
-  (id, position, scale) and to `PROJECTS` in `src/data/projects.ts`.
-  The scene, camera, nav and panel pick it up with zero component changes.
-- **Positions must stay ≥ 2.2 apart** — validated in dev by
-  `validateNodeSeparation()`.
-- **One active node.** Selection lives only in Zustand; node presses
-  `stopPropagation()`; background deselect goes through `onPointerMissed`
-  so the two paths can never cross-fire.
-- **Animation ownership.** R3F `useFrame` damps move the camera and node
-  transforms; Anime.js (`createTimeline`, `stagger`) moves DOM
-  opacity/transform only.
-- **GLB assets are progressive.** `assetUrl: null` renders the procedural
-  fallback. Drop a file under `public/models/`, set the URL, optionally
-  `useGLTF.preload` it via `preloadNodeAssets()`. Failures fall back
-  per-node, never crashing the scene.
-- **Reduced motion** (`prefers-reduced-motion`) makes camera moves near-
-  instant and skips UI timelines while preserving all functionality.
+- **Scroll is the single driver.** Continuous progress lives in the mutable
+  `scrollState` ref (read every frame, never re-renders React); discrete
+  stop changes go through Zustand (`activeSection` → DOM overlay/rail).
+- **Add a journey stop = edit data.** Append to `SECTIONS` in
+  `src/data/sections.ts` (pose, mood, copy ref). Camera, stage, lighting,
+  rail and overlay follow with zero component changes.
+- **One subject at a time.** Three artifact bays share one turntable;
+  scroll rotates the active bay front-center. No node graphs.
+- **Animation ownership.** R3F `useFrame` moves camera/stage/artifacts;
+  Anime.js moves DOM opacity/transform only. Never the same property.
+- **GLB assets are progressive.** `ArtifactModel url={null}` renders the
+  procedural artifact. Drop a file under `public/models/`, pass the URL,
+  preload via `preloadArtifactAsset()`. Failures fall back per-artifact.
+- **Reduced motion** steps discretely between stops (no glide), freezes
+  idle motion, and shortens UI timelines — functionality preserved.

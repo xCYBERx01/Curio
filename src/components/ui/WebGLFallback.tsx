@@ -1,9 +1,11 @@
-import { NODES } from '../../data/nodes.ts'
+import { ARCHIVE_IDS } from '../../data/sections.ts'
 import { IDENTITY_CONTENT, PROJECTS } from '../../data/projects.ts'
+import { isSafeHref } from '../../lib/links.ts'
 
 /**
- * Full DOM fallback: used when WebGL is unavailable. The 3D scene must
- * never be the only way to access portfolio information.
+ * Full DOM fallback: used when WebGL is unavailable. The 3D journey must
+ * never be the only way to access portfolio information — every project
+ * reads here as text.
  */
 export function WebGLFallback({ reason }: { reason: 'unavailable' | 'error' }) {
   return (
@@ -15,19 +17,26 @@ export function WebGLFallback({ reason }: { reason: 'unavailable' | 'error' }) {
           : 'The 3D scene failed to start, so here is the full portfolio as text. '}
         {IDENTITY_CONTENT.tagline}
       </p>
+      <p>{IDENTITY_CONTENT.description}</p>
       <ol>
-        {NODES.map((n) => (
-          <li key={n.id}>
-            <strong>
-              {n.index} — {n.label}
-            </strong>
-            <span>
-              {n.type === 'identity'
-                ? IDENTITY_CONTENT.description
-                : (PROJECTS[n.id]?.description ?? '')}
-            </span>
-          </li>
-        ))}
+        {(['croc-os', 'voltedge', 'arm-5dof', ...ARCHIVE_IDS] as const).map((id) => {
+          const p = PROJECTS[id]
+          const href = p.links.find((l) => isSafeHref(l.href))?.href
+          return (
+            <li key={id}>
+              <strong>{p.tagline}</strong>
+              <span>{p.description}</span>
+              {p.stack.length > 0 && <span>Stack: {p.stack.join(', ')}</span>}
+              {href && (
+                <span>
+                  <a href={href} target="_blank" rel="noreferrer">
+                    Open link ↗
+                  </a>
+                </span>
+              )}
+            </li>
+          )
+        })}
       </ol>
     </div>
   )
