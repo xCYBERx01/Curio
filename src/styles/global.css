@@ -1,0 +1,680 @@
+/* CURIO global styles — DOM layer only. The 3D scene is styled in-scene. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--curio-bg);
+  color: var(--curio-text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+::selection {
+  background: var(--curio-accent);
+  color: #0a0a0b;
+}
+
+.skip-link {
+  position: fixed;
+  top: -48px;
+  left: 12px;
+  z-index: 100;
+  background: var(--curio-text);
+  color: #0a0a0b;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 8px 12px;
+  text-decoration: none;
+  transition: top 160ms var(--ease-out);
+}
+
+.skip-link:focus-visible {
+  top: 8px;
+}
+
+:focus-visible {
+  outline: 1px solid var(--curio-accent);
+  outline-offset: 2px;
+}
+
+/* ---------- root layout ---------- */
+
+.curio-root {
+  position: relative;
+  height: 100%;
+}
+
+.curio-stage {
+  position: fixed;
+  inset: 0;
+}
+
+.curio-canvas-wrap {
+  position: absolute;
+  inset: 0;
+}
+
+.curio-canvas-wrap canvas {
+  display: block;
+  touch-action: pan-y;
+}
+
+/* ---------- header chrome ---------- */
+
+.curio-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-h);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-5);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.curio-header > * {
+  pointer-events: auto;
+}
+
+.curio-wordmark {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--font-mono);
+  user-select: none;
+}
+
+.curio-wordmark .mark {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+}
+
+.curio-wordmark .sub {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--curio-muted);
+}
+
+.curio-wordmark .dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--curio-accent);
+  margin-right: 8px;
+  transform: translateY(-1px);
+}
+
+.curio-nav {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.curio-nav-btn {
+  appearance: none;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--curio-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  padding: 7px 10px;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.curio-nav-btn .idx {
+  color: var(--curio-faint);
+  font-size: 10px;
+}
+
+.curio-nav-btn:hover {
+  color: var(--curio-text);
+  border-color: var(--curio-line);
+}
+
+.curio-nav-btn[aria-pressed="true"] {
+  color: var(--curio-text);
+  border-color: var(--curio-line);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.curio-nav-btn[aria-pressed="true"] .idx {
+  color: var(--curio-accent);
+}
+
+/* ---------- site index ---------- */
+
+.curio-index {
+  position: relative;
+}
+
+.curio-index-toggle {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--curio-line);
+  color: var(--curio-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  padding: 7px 12px;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.curio-index-toggle:hover,
+.curio-index-toggle[aria-expanded="true"] {
+  color: var(--curio-text);
+  border-color: var(--curio-faint);
+}
+
+.curio-index-toggle[aria-expanded="true"] {
+  border-color: var(--curio-accent);
+  color: var(--curio-text);
+}
+
+.curio-index-panel {
+  position: fixed;
+  top: calc(var(--header-h) + 12px);
+  left: var(--space-5);
+  width: 248px;
+  max-height: calc(100% - var(--header-h) - 96px);
+  overflow: auto;
+  z-index: 30;
+  background: var(--curio-panel);
+  border: 1px solid var(--curio-line);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: var(--space-4) var(--space-4) var(--space-3);
+}
+
+.curio-index-group {
+  margin-bottom: var(--space-3);
+}
+
+.curio-index-group:last-child {
+  margin-bottom: 0;
+}
+
+.curio-index-group h3 {
+  margin: 0 0 4px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  color: var(--curio-accent);
+}
+
+.curio-index-group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.curio-index-group button {
+  appearance: none;
+  background: transparent;
+  border: none;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 5px 2px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--curio-muted);
+  text-align: left;
+}
+
+.curio-index-group button:hover {
+  color: var(--curio-text);
+}
+
+.curio-index-group button[aria-pressed="true"] {
+  color: var(--curio-text);
+}
+
+.curio-index-group button .idx {
+  color: var(--curio-faint);
+  font-size: 10px;
+}
+
+.curio-index-group button[aria-pressed="true"] .idx {
+  color: var(--curio-accent);
+}
+
+/* ---------- status / hints ---------- */
+
+.curio-status {
+  position: fixed;
+  left: var(--space-5);
+  bottom: var(--space-4);
+  z-index: 20;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--curio-faint);
+  display: flex;
+  gap: 16px;
+  user-select: none;
+  opacity: 0;
+}
+
+.curio-status .live {
+  color: var(--curio-muted);
+}
+
+.curio-hints {
+  position: fixed;
+  right: var(--space-5);
+  bottom: var(--space-4);
+  z-index: 20;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--curio-faint);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  opacity: 0;
+}
+
+.curio-hints kbd {
+  font-family: inherit;
+  border: 1px solid var(--curio-line);
+  padding: 1px 6px;
+  color: var(--curio-muted);
+  font-size: 10px;
+}
+
+.curio-overview-btn {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--curio-line);
+  color: var(--curio-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  padding: 7px 12px;
+  cursor: pointer;
+}
+
+.curio-overview-btn:hover {
+  color: var(--curio-text);
+  border-color: var(--curio-faint);
+}
+
+/* ---------- detail panel ---------- */
+
+.curio-detail {
+  position: fixed;
+  top: calc(var(--header-h) + 12px);
+  right: var(--space-5);
+  width: min(var(--panel-w), calc(100vw - 32px));
+  max-height: calc(100% - var(--header-h) - 96px);
+  overflow: auto;
+  z-index: 30;
+  background: var(--curio-panel);
+  border: 1px solid var(--curio-line);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: var(--space-5);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.curio-detail[data-open="true"] {
+  visibility: visible;
+}
+
+.curio-detail-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: var(--space-4);
+}
+
+.curio-detail-kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--curio-accent);
+  margin-bottom: 6px;
+}
+
+.curio-detail-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.curio-detail-close {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--curio-line);
+  color: var(--curio-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.curio-detail-close:hover {
+  color: var(--curio-text);
+  border-color: var(--curio-faint);
+}
+
+.curio-detail-tagline {
+  color: var(--curio-muted);
+  font-size: 13.5px;
+  margin: 0 0 var(--space-4);
+}
+
+.curio-meta {
+  border-top: 1px solid var(--curio-line-soft);
+  margin-bottom: var(--space-4);
+}
+
+.curio-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--curio-line-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+
+.curio-meta-row dt {
+  color: var(--curio-faint);
+  margin: 0;
+}
+
+.curio-meta-row dd {
+  color: var(--curio-muted);
+  margin: 0;
+  text-align: right;
+}
+
+.curio-detail-body {
+  font-size: 13.5px;
+  color: #c9c9ce;
+  margin: 0 0 var(--space-4);
+}
+
+.curio-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+}
+
+.curio-stack li {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  border: 1px solid var(--curio-line);
+  color: var(--curio-muted);
+  padding: 3px 8px;
+}
+
+.curio-links {
+  display: flex;
+  gap: 8px;
+  margin-bottom: var(--space-4);
+}
+
+.curio-links a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--curio-text);
+  border: 1px solid var(--curio-line);
+  padding: 7px 12px;
+  text-decoration: none;
+}
+
+.curio-links a:hover {
+  border-color: var(--curio-accent);
+}
+
+.curio-pending {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--curio-faint);
+  border: 1px dashed var(--curio-line);
+  padding: 8px 10px;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- 3D node labels (Drei Html) ---------- */
+
+.curio-node-label {
+  pointer-events: none !important;
+  user-select: none;
+}
+
+.curio-node-tag {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--curio-muted);
+  white-space: nowrap;
+  transform: translateY(-6px);
+  transition: color 200ms var(--ease-out);
+}
+
+.curio-node-tag .n-idx {
+  color: var(--curio-faint);
+}
+
+.curio-node-tag[data-state="hover"],
+.curio-node-tag[data-state="active"] {
+  color: var(--curio-text);
+}
+
+.curio-node-tag[data-state="active"] .n-idx {
+  color: var(--curio-accent);
+}
+
+.curio-node-tag[data-state="inactive"] {
+  opacity: 0.35;
+}
+
+/* ---------- load screen ---------- */
+
+.curio-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--curio-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.curio-loader-inner {
+  width: min(320px, 70vw);
+  font-family: var(--font-mono);
+}
+
+.curio-loader-mark {
+  font-size: 13px;
+  letter-spacing: 0.32em;
+  margin-bottom: 6px;
+}
+
+.curio-loader-sub {
+  font-size: 11px;
+  color: var(--curio-faint);
+  letter-spacing: 0.08em;
+  margin-bottom: 18px;
+}
+
+.curio-loader-track {
+  height: 1px;
+  background: var(--curio-line);
+  position: relative;
+  overflow: hidden;
+}
+
+.curio-loader-bar {
+  position: absolute;
+  inset: 0;
+  background: var(--curio-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* ---------- fallback / error ---------- */
+
+.curio-fallback,
+.curio-error {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  padding: calc(var(--header-h) + 24px) var(--space-5) var(--space-6);
+  background: var(--curio-bg);
+}
+
+.curio-fallback h1,
+.curio-error h1 {
+  font-size: 24px;
+  margin: 0 0 8px;
+}
+
+.curio-fallback p,
+.curio-error p {
+  color: var(--curio-muted);
+  max-width: 60ch;
+}
+
+.curio-fallback ol {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  max-width: 640px;
+}
+
+.curio-fallback li {
+  border: 1px solid var(--curio-line);
+  padding: 14px 16px;
+}
+
+.curio-fallback li strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.curio-fallback li span {
+  color: var(--curio-muted);
+  font-size: 13px;
+}
+
+.curio-retry {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--curio-line);
+  color: var(--curio-text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 8px 14px;
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+/* SEO / screen-reader fallback content (visually hidden, still indexed) */
+.curio-sr-content {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 860px) {
+  .curio-nav {
+    display: none;
+  }
+
+  /* The INDEX toggle stays visible — it is the mobile nav path. */
+  .curio-index-toggle {
+    opacity: 1;
+  }
+
+  .curio-header {
+    padding: 0 var(--space-4);
+  }
+
+  .curio-status {
+    display: none;
+  }
+
+  .curio-index-panel {
+    left: 12px;
+    max-height: 52%;
+  }
+
+  .curio-detail {
+    top: auto;
+    right: 12px;
+    left: 12px;
+    bottom: 12px;
+    width: auto;
+    max-height: 46%;
+  }
+
+  .curio-hints {
+    display: none;
+  }
+}
+
+/* ---------- reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

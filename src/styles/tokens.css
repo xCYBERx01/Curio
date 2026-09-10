@@ -1,0 +1,30 @@
+/* CURIO design tokens — restrained, engineered, quiet. */
+
+:root {
+  --curio-bg: #0a0a0b;
+  --curio-bg-2: #101013;
+  --curio-panel: rgba(15, 15, 18, 0.88);
+  --curio-line: #26262c;
+  --curio-line-soft: #1b1b20;
+  --curio-text: #ececea;
+  --curio-muted: #9b9ba2;
+  --curio-faint: #62626b;
+  --curio-accent: #ff4d00;
+  --curio-accent-dim: rgba(255, 77, 0, 0.16);
+  --curio-ok: #b8c4c0;
+
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  --panel-w: 340px;
+  --header-h: 56px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}

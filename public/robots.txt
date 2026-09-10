@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://xcyberx01.github.io/Curio/sitemap.xml
