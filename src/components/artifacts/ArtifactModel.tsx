@@ -59,14 +59,6 @@ export function FittedArtifactModel({ url, height = 1.6 }: { url: string; height
   return <primitive object={scene} />
 }
 
-export function preloadArtifactAsset(url: string | null): void {
-  if (url) useGLTF.preload(url)
-}
-
-/**
- * Renders `url` when set, otherwise the procedural `fallback` directly.
- * `fitHeight` normalizes the model to a target height instead of raw clone.
- */
 export function ArtifactModel({
   url,
   fallback,
@@ -78,7 +70,7 @@ export function ArtifactModel({
 }) {
   if (!url) return <>{fallback}</>
   return (
-    <ArtifactErrorBoundary fallback={fallback}>
+    <ArtifactErrorBoundary key={url} fallback={fallback}>
       <Suspense fallback={fallback}>
         {fitHeight ? <FittedArtifactModel url={url} height={fitHeight} /> : <Model url={url} />}
       </Suspense>

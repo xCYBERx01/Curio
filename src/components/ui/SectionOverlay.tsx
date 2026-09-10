@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react'
 import { animate, stagger } from 'animejs'
-import { ARCHIVE_IDS, SECTION_MAP } from '../../data/sections.ts'
-import { IDENTITY_CONTENT, PROJECTS } from '../../data/projects.ts'
-import type { ProjectContent } from '../../data/projects.ts'
-import { isSafeHref } from '../../lib/links.ts'
-import { useCurioStore } from '../../store/useCurioStore.ts'
-import { usePrefersReducedMotion } from '../../hooks/useCurio.ts'
+import { ARCHIVE_IDS, SECTION_MAP } from '../../data/sections'
+import { IDENTITY_CONTENT, PROJECTS } from '../../data/projects'
+import type { ProjectContent } from '../../data/projects'
+import { isSafeHref } from '../../lib/links'
+import { useCurioStore } from '../../store/useCurioStore'
+import { usePrefersReducedMotion } from '../../hooks/useCurio'
 
 /**
  * Fixed editorial overlay: one section's typography at a time, crossfaded
@@ -80,13 +80,16 @@ export function SectionOverlay() {
   useEffect(() => {
     const el = rootRef.current
     if (!el || reducedMotion) return
-    animate(el.querySelectorAll('.curio-anim'), {
+    const anim = animate(el.querySelectorAll('.curio-anim'), {
       opacity: [0, 1],
       translateY: [14, 0],
       duration: 550,
       delay: stagger(70),
       ease: 'outCubic',
     })
+    return () => {
+      anim.cancel()
+    }
   }, [activeSection, reducedMotion])
 
   return (

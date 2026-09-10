@@ -1,5 +1,5 @@
-import { NAV_SECTIONS, SECTION_MAP } from '../../data/sections.ts'
-import { useCurioStore } from '../../store/useCurioStore.ts'
+import { NAV_SECTIONS, SECTION_MAP } from '../../data/sections'
+import { useCurioStore } from '../../store/useCurioStore'
 
 /**
  * Scroll rail: one tick per navigable stop. Clicking requests a

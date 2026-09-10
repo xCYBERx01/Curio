@@ -1,12 +1,12 @@
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { SECTION_MAP, TURNTABLE_RADIUS, stageAngleFor } from '../../data/sections.ts'
-import { scrollState } from '../../lib/scroll.ts'
-import { usePrefersReducedMotion } from '../../hooks/useCurio.ts'
-import { CrocDevice } from './CrocDevice.tsx'
-import { RoverShowcase } from './RoverArtifact.tsx'
-import { ArmShowcase } from './RobotArm.tsx'
+import { SECTION_MAP, TURNTABLE_RADIUS, stageAngleFor } from '../../data/sections'
+import { scrollState } from '../../lib/scroll'
+import { usePrefersReducedMotion } from '../../hooks/useCurio'
+import { CrocDevice } from './CrocDevice'
+import { RoverShowcase } from './RoverArtifact'
+import { ArmShowcase } from './RobotArm'
 
 const SLOT_ANGLE = (Math.PI * 2) / 3
 
@@ -21,15 +21,19 @@ export function TurntableStage() {
   const reducedMotion = usePrefersReducedMotion()
 
   useFrame(() => {
+    if (!wheel.current) return
     const f = reducedMotion ? Math.round(scrollState.float) : scrollState.float
     wheel.current.rotation.y = stageAngleFor(f)
   })
 
-  const slots = [
-    { angle: 0, content: <CrocDevice assetUrl={SECTION_MAP.croc.assetUrl ?? null} /> },
-    { angle: SLOT_ANGLE, content: <RoverShowcase assetUrl={SECTION_MAP.voltedge.assetUrl ?? null} /> },
-    { angle: SLOT_ANGLE * 2, content: <ArmShowcase assetUrl={SECTION_MAP.arm.assetUrl ?? null} /> },
-  ]
+  const slots = useMemo(
+    () => [
+      { angle: 0, content: <CrocDevice assetUrl={SECTION_MAP.croc.assetUrl ?? null} /> },
+      { angle: SLOT_ANGLE, content: <RoverShowcase assetUrl={SECTION_MAP.voltedge.assetUrl ?? null} /> },
+      { angle: SLOT_ANGLE * 2, content: <ArmShowcase assetUrl={SECTION_MAP.arm.assetUrl ?? null} /> },
+    ],
+    [],
+  )
 
   return (
     <group>

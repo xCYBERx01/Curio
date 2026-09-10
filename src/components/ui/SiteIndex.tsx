@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { animate } from 'animejs'
-import { ARCHIVE_IDS, NAV_SECTIONS, SECTION_MAP } from '../../data/sections.ts'
-import { PROJECTS } from '../../data/projects.ts'
-import { isSafeHref } from '../../lib/links.ts'
-import { useCurioStore } from '../../store/useCurioStore.ts'
-import { usePrefersReducedMotion } from '../../hooks/useCurio.ts'
+import { ARCHIVE_IDS, NAV_SECTIONS, SECTION_MAP } from '../../data/sections'
+import { getProject } from '../../data/projects'
+import { isSafeHref } from '../../lib/links'
+import { useCurioStore } from '../../store/useCurioStore'
+import { usePrefersReducedMotion } from '../../hooks/useCurio'
 
 /**
  * Secondary navigation: journey stops plus the full project archive.
@@ -19,7 +19,10 @@ export function SiteIndex() {
   useEffect(() => {
     const el = panelRef.current
     if (!el || !open || reducedMotion) return
-    animate(el, { opacity: [0, 1], translateX: [-12, 0], duration: 320, ease: 'outCubic' })
+    const anim = animate(el, { opacity: [0, 1], translateX: [-12, 0], duration: 320, ease: 'outCubic' })
+    return () => {
+      anim.cancel()
+    }
   }, [open, reducedMotion])
 
   useEffect(() => {
@@ -69,7 +72,7 @@ export function SiteIndex() {
             <h3>ARCHIVE</h3>
             <ul>
               {ARCHIVE_IDS.map((id, i) => {
-                const p = PROJECTS[id]
+                const p = getProject(id)
                 const href = p.links.find((l) => isSafeHref(l.href))?.href
                 const label = `${String(i + 1).padStart(2, '0')} — ${p.tagline}`
                 return (

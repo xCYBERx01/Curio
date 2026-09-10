@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { usePrefersReducedMotion } from '../../hooks/useCurio.ts'
+import { usePrefersReducedMotion } from '../../hooks/useCurio'
 
 /**
  * HeroCore — the installation's anchor: a dark reactor octahedron with a
@@ -18,6 +18,7 @@ export function HeroCore() {
   useFrame((state, rawDt) => {
     const dt = Math.min(rawDt, 0.05)
     if (reducedMotion) return
+    if (!core.current || !ringA.current || !ringB.current) return
     const t = state.clock.elapsedTime
     core.current.rotation.y += dt * 0.22
     ringA.current.rotation.y -= dt * 0.3

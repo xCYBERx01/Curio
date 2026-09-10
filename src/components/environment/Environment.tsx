@@ -2,11 +2,11 @@ import { useRef } from 'react'
 import { Grid } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { sampleMood } from '../../lib/camera.ts'
-import type { SampledMood } from '../../lib/camera.ts'
-import { scrollState } from '../../lib/scroll.ts'
-import { useCurioStore } from '../../store/useCurioStore.ts'
-import { usePrefersReducedMotion } from '../../hooks/useCurio.ts'
+import { sampleMood } from '../../lib/camera'
+import type { SampledMood } from '../../lib/camera'
+import { scrollState } from '../../lib/scroll'
+import { useCurioStore } from '../../store/useCurioStore'
+import { usePrefersReducedMotion } from '../../hooks/useCurio'
 
 /**
  * Laboratory void: floor, faint technical grid, range ring, one slow
@@ -35,11 +35,12 @@ export function Environment() {
     sampleMood(f, mood.current)
     const m = mood.current
     const k = reducedMotion ? 1 : Math.min(1, dt * 2.5)
+    if (!ambient.current || !key.current || !rim.current) return
     ambient.current.intensity += (m.ambientIntensity - ambient.current.intensity) * k
     key.current.intensity += (m.keyIntensity - key.current.intensity) * k
     key.current.color.lerp(m.keyColor, k)
     rim.current.intensity += (m.rimIntensity - rim.current.intensity) * k
-    if (!reducedMotion) sweep.current.rotation.y += dt * 0.1
+    if (!reducedMotion && sweep.current) sweep.current.rotation.y += dt * 0.1
   })
 
   return (

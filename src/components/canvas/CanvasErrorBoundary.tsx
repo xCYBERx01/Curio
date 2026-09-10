@@ -1,6 +1,6 @@
 import { Component } from 'react'
 import type { ReactNode } from 'react'
-import { WebGLFallback } from '../ui/WebGLFallback.tsx'
+import { WebGLFallback } from '../ui/WebGLFallback'
 
 interface Props {
   children: ReactNode
@@ -9,6 +9,8 @@ interface Props {
 interface State {
   failed: boolean
   textMode: boolean
+  /** Bumped on retry so the canvas subtree remounts with a fresh GL context. */
+  retry: number
   /** Surfaced so the exact failure can be reported instead of guessed. */
   message: string | null
 }
@@ -19,7 +21,7 @@ interface State {
  * device failures can be diagnosed from a screenshot or paste.
  */
 export class CanvasErrorBoundary extends Component<Props, State> {
-  state: State = { failed: false, textMode: false, message: null }
+  state: State = { failed: false, textMode: false, retry: 0, message: null }
 
   static getDerivedStateFromError(error: unknown): Partial<State> {
     const message =
@@ -63,7 +65,9 @@ export class CanvasErrorBoundary extends Component<Props, State> {
             <button
               type="button"
               className="curio-retry"
-              onClick={() => this.setState({ failed: false, message: null })}
+              onClick={() =>
+                this.setState((s) => ({ failed: false, message: null, retry: s.retry + 1 }))
+              }
             >
               RETRY 3D
             </button>
@@ -78,6 +82,6 @@ export class CanvasErrorBoundary extends Component<Props, State> {
         </div>
       )
     }
-    return this.props.children
+    return <div key={this.state.retry}>{this.props.children}</div>
   }
 }

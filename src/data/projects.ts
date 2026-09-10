@@ -207,3 +207,20 @@ export const PROJECTS: Record<string, ProjectContent> = {
     status: 'published',
   },
 }
+
+/**
+ * Guarded lookup: archive/index lists can never throw on data drift —
+ * unknown ids render an explicit "forthcoming" stub instead of crashing.
+ */
+export function getProject(id: string): ProjectContent {
+  return (
+    PROJECTS[id] ?? {
+      id,
+      tagline: 'Untitled build',
+      description: 'Details forthcoming.',
+      stack: [],
+      links: [],
+      status: 'forthcoming' as const,
+    }
+  )
+}

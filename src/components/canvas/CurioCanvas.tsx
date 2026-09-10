@@ -1,11 +1,11 @@
-import { Suspense, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
-import { isWebGLAvailable } from '../../lib/platform.ts'
-import { useCurioStore } from '../../store/useCurioStore.ts'
-import { WebGLFallback } from '../ui/WebGLFallback.tsx'
-import { CanvasErrorBoundary } from './CanvasErrorBoundary.tsx'
-import { Scene } from './Scene.tsx'
+import { isWebGLAvailable } from '../../lib/platform'
+import { useCurioStore } from '../../store/useCurioStore'
+import { WebGLFallback } from '../ui/WebGLFallback'
+import { CanvasErrorBoundary } from './CanvasErrorBoundary'
+import { Scene } from './Scene'
 
 /**
  * CurioCanvas — the 3D layer. Owns renderer, background and fog.
@@ -43,9 +43,9 @@ export function CurioCanvas() {
         >
           <color attach="background" args={['#f5f5f7']} />
           <fog attach="fog" args={['#f5f5f7', 16, 32]} />
-          <Suspense fallback={null}>
-            <Scene />
-          </Suspense>
+          {/* No outer Suspense: each bay suspends independently with its own
+              procedural fallback, so one loading GLB never blanks the world. */}
+          <Scene />
         </Canvas>
         <div className="curio-vignette" aria-hidden="true" />
       </CanvasErrorBoundary>

@@ -1,12 +1,12 @@
-import { useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import type { ThreeEvent } from '@react-three/fiber'
 import * as THREE from 'three'
-import { PROJECT_SLOT, slotProximity } from '../../data/sections.ts'
-import { scrollState } from '../../lib/scroll.ts'
-import { useCurioStore } from '../../store/useCurioStore.ts'
-import { usePrefersReducedMotion } from '../../hooks/useCurio.ts'
-import { ArtifactModel } from './ArtifactModel.tsx'
+import { PROJECT_SLOT, SECTION_MAP, slotProximity } from '../../data/sections'
+import { scrollState } from '../../lib/scroll'
+import { useCurioStore } from '../../store/useCurioStore'
+import { usePrefersReducedMotion } from '../../hooks/useCurio'
+import { ArtifactModel } from './ArtifactModel'
 
 const FACE_W = 256
 const FACE_H = 128
@@ -58,7 +58,7 @@ export function CrocDevice({ assetUrl = null }: { assetUrl?: string | null }) {
 
   const pointer = useThree((s) => s.pointer)
 
-  const { canvas, texture } = useMemo(() => {
+  const { texture, ctx } = useMemo(() => {
     const c = document.createElement('canvas')
     c.width = FACE_W
     c.height = FACE_H
@@ -66,8 +66,13 @@ export function CrocDevice({ assetUrl = null }: { assetUrl?: string | null }) {
     tex.colorSpace = THREE.SRGBColorSpace
     tex.minFilter = THREE.LinearFilter
     tex.magFilter = THREE.LinearFilter
-    return { canvas: c, texture: tex }
+    return { canvas: c, texture: tex, ctx: c.getContext('2d') }
   }, [])
+
+  useEffect(() => {
+    if (!ctx && import.meta.env.DEV) console.warn('[curio] OLED 2d context unavailable.')
+    return () => texture.dispose()
+  }, [texture, ctx])
 
   useFrame((state, rawDt) => {
     const dt = Math.min(rawDt, 0.05)
@@ -113,65 +118,65 @@ export function CrocDevice({ assetUrl = null }: { assetUrl?: string | null }) {
     fs.lookX += (fs.lookTX - fs.lookX) * 0.2
     fs.lookY += (fs.lookTY - fs.lookY) * 0.2
 
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    ctx.fillStyle = '#000'
-    ctx.fillRect(0, 0, FACE_W, FACE_H)
+    const ctx2d = ctx
+    if (!ctx2d) return
+    ctx2d.fillStyle = '#000'
+    ctx2d.fillRect(0, 0, FACE_W, FACE_H)
 
     if (w < 0.35) {
       // Boot splash — mirrors the real firmware greeting.
-      ctx.fillStyle = '#fff'
-      ctx.font = '16px monospace'
-      ctx.textAlign = 'center'
-      if (Math.floor(t * 2) % 2 === 0) ctx.fillText('CROC v0.5.3', FACE_W / 2, FACE_H / 2 + 6)
+      ctx2d.fillStyle = '#fff'
+      ctx2d.font = '16px monospace'
+      ctx2d.textAlign = 'center'
+      if (Math.floor(t * 2) % 2 === 0) ctx2d.fillText('CROC v0.5.3', FACE_W / 2, FACE_H / 2 + 6)
     } else {
       const eyeY = 30
       const eyeW = 66
       const eyeH = 42
       const lx = 32
       const rx = 158
-      ctx.fillStyle = '#fff'
+      ctx2d.fillStyle = '#fff'
       if (fs.blinking) {
-        ctx.fillRect(lx, eyeY + 18, eyeW, 5)
-        ctx.fillRect(rx, eyeY + 18, eyeW, 5)
+        ctx2d.fillRect(lx, eyeY + 18, eyeW, 5)
+        ctx2d.fillRect(rx, eyeY + 18, eyeW, 5)
       } else {
-        roundedRect(ctx, lx, eyeY, eyeW, eyeH, 16)
-        ctx.fill()
-        roundedRect(ctx, rx, eyeY, eyeW, eyeH, 16)
-        ctx.fill()
+        roundedRect(ctx2d, lx, eyeY, eyeW, eyeH, 16)
+        ctx2d.fill()
+        roundedRect(ctx2d, rx, eyeY, eyeW, eyeH, 16)
+        ctx2d.fill()
         // Pupils track the visitor.
-        ctx.fillStyle = '#000'
-        ctx.beginPath()
-        ctx.arc(lx + eyeW / 2 + fs.lookX, eyeY + eyeH / 2 + fs.lookY, 10, 0, Math.PI * 2)
-        ctx.fill()
-        ctx.beginPath()
-        ctx.arc(rx + eyeW / 2 + fs.lookX, eyeY + eyeH / 2 + fs.lookY, 10, 0, Math.PI * 2)
-        ctx.fill()
+        ctx2d.fillStyle = '#000'
+        ctx2d.beginPath()
+        ctx2d.arc(lx + eyeW / 2 + fs.lookX, eyeY + eyeH / 2 + fs.lookY, 10, 0, Math.PI * 2)
+        ctx2d.fill()
+        ctx2d.beginPath()
+        ctx2d.arc(rx + eyeW / 2 + fs.lookX, eyeY + eyeH / 2 + fs.lookY, 10, 0, Math.PI * 2)
+        ctx2d.fill()
       }
       // Mouth: idle / happy / surprised.
-      ctx.strokeStyle = '#fff'
-      ctx.lineWidth = 4
-      ctx.lineCap = 'round'
-      ctx.beginPath()
+      ctx2d.strokeStyle = '#fff'
+      ctx2d.lineWidth = 4
+      ctx2d.lineCap = 'round'
+      ctx2d.beginPath()
       if (fs.expr === 1) {
-        ctx.moveTo(112, 102)
-        ctx.lineTo(122, 110)
-        ctx.lineTo(134, 110)
-        ctx.lineTo(144, 102)
+        ctx2d.moveTo(112, 102)
+        ctx2d.lineTo(122, 110)
+        ctx2d.lineTo(134, 110)
+        ctx2d.lineTo(144, 102)
       } else if (fs.expr === 2) {
-        ctx.arc(128, 104, 7, 0, Math.PI * 2)
+        ctx2d.arc(128, 104, 7, 0, Math.PI * 2)
       } else {
-        ctx.moveTo(114, 106)
-        ctx.lineTo(142, 106)
+        ctx2d.moveTo(114, 106)
+        ctx2d.lineTo(142, 106)
       }
-      ctx.stroke()
+      ctx2d.stroke()
     }
     texture.needsUpdate = true
   })
 
   const handleSelect = (e: ThreeEvent<MouseEvent>): void => {
     e.stopPropagation()
-    useCurioStore.getState().goToSection(2)
+    useCurioStore.getState().goToSection(SECTION_MAP.croc.stop)
   }
 
   const handleDown = (e: ThreeEvent<PointerEvent>): void => {

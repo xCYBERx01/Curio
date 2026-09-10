@@ -1,11 +1,11 @@
-import { CurioCanvas } from '../components/canvas/CurioCanvas.tsx'
-import { Chrome } from '../components/ui/Chrome.tsx'
-import { LoadScreen } from '../components/ui/LoadScreen.tsx'
-import { ScrollRail } from '../components/ui/ScrollRail.tsx'
-import { SectionOverlay } from '../components/ui/SectionOverlay.tsx'
-import { ARCHIVE_IDS, STOP_COUNT } from '../data/sections.ts'
-import { IDENTITY_CONTENT, PROJECTS } from '../data/projects.ts'
-import { useCompactViewport, useCurioKeyboard, useScrollDriver } from '../hooks/useCurio.ts'
+import { CurioCanvas } from '../components/canvas/CurioCanvas'
+import { Chrome } from '../components/ui/Chrome'
+import { LoadScreen } from '../components/ui/LoadScreen'
+import { ScrollRail } from '../components/ui/ScrollRail'
+import { SectionOverlay } from '../components/ui/SectionOverlay'
+import { ARCHIVE_IDS, STOP_COUNT } from '../data/sections'
+import { IDENTITY_CONTENT, getProject } from '../data/projects'
+import { useCompactViewport, useCurioKeyboard, useScrollDriver } from '../hooks/useCurio'
 
 /**
  * Curio — a scroll-driven spatial journey. Composition only:
@@ -43,19 +43,25 @@ export default function App() {
         <p>{IDENTITY_CONTENT.description}</p>
         <h2>Featured projects</h2>
         <ul>
-          {(['croc-os', 'voltedge', 'arm-5dof'] as const).map((id) => (
-            <li key={id}>
-              {PROJECTS[id].tagline} {PROJECTS[id].description}
-            </li>
-          ))}
+          {(['croc-os', 'voltedge', 'arm-5dof'] as const).map((id) => {
+            const p = getProject(id)
+            return (
+              <li key={id}>
+                {p.tagline} {p.description}
+              </li>
+            )
+          })}
         </ul>
         <h2>Archive</h2>
         <ul>
-          {ARCHIVE_IDS.map((id) => (
-            <li key={id}>
-              {PROJECTS[id].tagline} — {PROJECTS[id].stack.join(', ')}
-            </li>
-          ))}
+          {ARCHIVE_IDS.map((id) => {
+            const p = getProject(id)
+            return (
+              <li key={id}>
+                {p.tagline} — {p.stack.join(', ')}
+              </li>
+            )
+          })}
         </ul>
       </section>
     </div>

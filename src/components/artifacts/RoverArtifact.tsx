@@ -3,11 +3,11 @@ import type { ReactNode } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import type { ThreeEvent } from '@react-three/fiber'
 import * as THREE from 'three'
-import { PROJECT_SLOT, slotProximity } from '../../data/sections.ts'
-import { scrollState } from '../../lib/scroll.ts'
-import { useCurioStore } from '../../store/useCurioStore.ts'
-import { usePrefersReducedMotion } from '../../hooks/useCurio.ts'
-import { ArtifactModel } from './ArtifactModel.tsx'
+import { PROJECT_SLOT, SECTION_MAP, slotProximity } from '../../data/sections'
+import { scrollState } from '../../lib/scroll'
+import { useCurioStore } from '../../store/useCurioStore'
+import { usePrefersReducedMotion } from '../../hooks/useCurio'
+import { ArtifactModel } from './ArtifactModel'
 
 /**
  * VoltEdge artifact: a believable competition rover — dual-layer chassis,
@@ -35,7 +35,9 @@ export function RoverArtifact({ bare = false }: { bare?: boolean }) {
       }
       // Sensor head tracks the visitor when this bay is live.
       const targetYaw = prox > 0.35 ? pointer.x * 0.65 : 0
-      head.current.rotation.y += (targetYaw - head.current.rotation.y) * Math.min(1, dt * 3)
+      if (head.current) {
+        head.current.rotation.y += (targetYaw - head.current.rotation.y) * Math.min(1, dt * 3)
+      }
     }
     if (glowMat.current) glowMat.current.opacity = 0.05 + prox * 0.2
     if (lensMat.current && !reducedMotion) {
@@ -45,7 +47,7 @@ export function RoverArtifact({ bare = false }: { bare?: boolean }) {
 
   const handleSelect = (e: ThreeEvent<MouseEvent>): void => {
     e.stopPropagation()
-    useCurioStore.getState().goToSection(3)
+    useCurioStore.getState().goToSection(SECTION_MAP.voltedge.stop)
   }
 
   const wheelAt = (x: number, z: number, i: number): ReactNode => (
@@ -143,7 +145,9 @@ export function RoverShowcase({ assetUrl = null }: { assetUrl?: string | null })
 
   useFrame((_state, rawDt) => {
     const dt = Math.min(rawDt, 0.05)
-    if (!reducedMotion) spinner.current.rotation.y += dt * 0.3
+    if (!reducedMotion) {
+      if (spinner.current) spinner.current.rotation.y += dt * 0.3
+    }
     const prox = slotProximity(scrollState.float, PROJECT_SLOT.voltedge)
     if (glowMat.current) glowMat.current.opacity = 0.05 + prox * 0.2
   })
@@ -153,7 +157,7 @@ export function RoverShowcase({ assetUrl = null }: { assetUrl?: string | null })
       onPointerDown={(e) => e.stopPropagation()}
       onClick={(e) => {
         e.stopPropagation()
-        useCurioStore.getState().goToSection(3)
+        useCurioStore.getState().goToSection(SECTION_MAP.voltedge.stop)
       }}
       onPointerOver={(e) => {
         e.stopPropagation()

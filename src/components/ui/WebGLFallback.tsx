@@ -1,6 +1,6 @@
-import { ARCHIVE_IDS } from '../../data/sections.ts'
-import { IDENTITY_CONTENT, PROJECTS } from '../../data/projects.ts'
-import { isSafeHref } from '../../lib/links.ts'
+import { ARCHIVE_IDS } from '../../data/sections'
+import { IDENTITY_CONTENT, getProject } from '../../data/projects'
+import { isSafeHref } from '../../lib/links'
 
 /**
  * Full DOM fallback: used when WebGL is unavailable. The 3D journey must
@@ -20,7 +20,7 @@ export function WebGLFallback({ reason }: { reason: 'unavailable' | 'error' }) {
       <p>{IDENTITY_CONTENT.description}</p>
       <ol>
         {(['croc-os', 'voltedge', 'arm-5dof', ...ARCHIVE_IDS] as const).map((id) => {
-          const p = PROJECTS[id]
+          const p = getProject(id)
           const href = p.links.find((l) => isSafeHref(l.href))?.href
           return (
             <li key={id}>

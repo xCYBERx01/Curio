@@ -1,4 +1,4 @@
-import type { CameraPose, Vec3 } from '../store/useCurioStore.ts'
+import type { CameraPose, Vec3 } from '../store/useCurioStore'
 
 /**
  * Single source of truth for the journey: 7 scroll stops, one continuous
@@ -109,7 +109,11 @@ export const MOODS: Record<SectionId, Mood> = {
 /* ---------------- carousel ---------------- */
 
 /** Turntable slots: project stop index (2,3,4) → artifact slot (0,1,2). */
-export const PROJECT_SLOT: Record<string, number> = { croc: 0, voltedge: 1, arm: 2 }
+export const PROJECT_SLOT: { croc: number; voltedge: number; arm: number } = {
+  croc: 0,
+  voltedge: 1,
+  arm: 2,
+}
 
 export const TURNTABLE_RADIUS = 3.4
 export const SLOT_COUNT = 3

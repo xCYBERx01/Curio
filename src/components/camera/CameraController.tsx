@@ -1,11 +1,11 @@
 import { useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
-import { sampleCameraPose } from '../../lib/camera.ts'
-import type { CameraPose } from '../../store/useCurioStore.ts'
-import { useCurioStore } from '../../store/useCurioStore.ts'
-import { scrollState } from '../../lib/scroll.ts'
-import { usePrefersReducedMotion } from '../../hooks/useCurio.ts'
+import { sampleCameraPose } from '../../lib/camera'
+import type { CameraPose } from '../../store/useCurioStore'
+import { useCurioStore } from '../../store/useCurioStore'
+import { scrollState } from '../../lib/scroll'
+import { usePrefersReducedMotion } from '../../hooks/useCurio'
 
 /**
  * The SOLE owner of the camera. Scroll progress is the single driver:

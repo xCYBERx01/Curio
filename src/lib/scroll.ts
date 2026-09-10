@@ -1,4 +1,4 @@
-import { STOP_COUNT } from '../data/sections.ts'
+import { STOP_COUNT } from '../data/sections'
 
 /**
  * Transient scroll state — the single continuous driver of camera, stage

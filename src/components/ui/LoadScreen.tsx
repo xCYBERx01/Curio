@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { createTimeline } from 'animejs'
-import { useCurioStore } from '../../store/useCurioStore.ts'
-import { usePrefersReducedMotion } from '../../hooks/useCurio.ts'
+import { useCurioStore } from '../../store/useCurioStore'
+import { usePrefersReducedMotion } from '../../hooks/useCurio'
 
 /**
  * Restrained load sequence: environment establishes, bar fills, overlay
@@ -36,7 +36,10 @@ export function LoadScreen() {
       '+=60',
     )
     const failsafe = window.setTimeout(() => useCurioStore.getState().markReady(), 3000)
-    return () => window.clearTimeout(failsafe)
+    return () => {
+      window.clearTimeout(failsafe)
+      tl.cancel()
+    }
   }, [ready, reducedMotion])
 
   useEffect(() => {

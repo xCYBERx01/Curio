@@ -1,8 +1,8 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
-import { SECTIONS } from '../data/sections.ts'
-import { syncScrollState } from '../lib/scroll.ts'
-import { useCurioStore } from '../store/useCurioStore.ts'
-import { preloadArtifactAsset } from '../components/artifacts/ArtifactModel.tsx'
+import { SECTIONS, SECTION_MAP } from '../data/sections'
+import { preloadArtifactAsset } from '../lib/models'
+import { syncScrollState } from '../lib/scroll'
+import { useCurioStore } from '../store/useCurioStore'
 
 function matchQuery(query: string): boolean {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false
@@ -64,17 +64,18 @@ export function useScrollDriver(): void {
         const stop = Math.min(SECTIONS.length - 1, Math.max(0, Math.round(f)))
         useCurioStore.getState().setActiveSection(SECTIONS[stop].id)
         // Stream bay models progressively as the journey approaches them —
-        // first paint never pays for geometry. Procedural fallbacks hold
-        // each bay until its GLB arrives.
+        // first paint never pays for geometry. URLs come from the section
+        // data (single source of truth). Procedural fallbacks hold each
+        // bay until its GLB arrives.
         if (!armPreloaded && f > 0.4) {
           armPreloaded = true
-          preloadArtifactAsset('/models/robo-arm.glb')
+          preloadArtifactAsset(SECTION_MAP.arm.assetUrl)
         }
         // Stream the heavy NRL assembly only once the journey is underway —
         // never block first paint with it.
         if (!nrlPreloaded && f > 0.7) {
           nrlPreloaded = true
-          preloadArtifactAsset('/models/nrlbot.glb')
+          preloadArtifactAsset(SECTION_MAP.voltedge.assetUrl)
         }
       })
     }

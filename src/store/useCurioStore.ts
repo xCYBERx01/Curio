@@ -1,6 +1,6 @@
 import { create } from 'zustand'
-import type { SectionId } from '../data/sections.ts'
-import { scrollToSection } from '../lib/scroll.ts'
+import type { SectionId } from '../data/sections'
+import { scrollToSection } from '../lib/scroll'
 
 /** Fixed-length 3D vector tuple. */
 export type Vec3 = [number, number, number]
@@ -35,7 +35,8 @@ export const useCurioStore = create<CurioState>()((set, get) => ({
   },
 
   goToSection: (stop: number) => {
-    if (!get().ready) return
+    // Scrolling is never destructive — allow it even before the load gate
+    // lifts, so early clicks always produce visible motion (never silence).
     scrollToSection(stop)
   },
 

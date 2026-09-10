@@ -1,7 +1,7 @@
 import * as THREE from 'three'
-import type { CameraPose, Vec3 } from '../store/useCurioStore.ts'
-import { MOODS, POSE_ORDER, poseFor } from '../data/sections.ts'
-import type { Mood, SectionId } from '../data/sections.ts'
+import type { CameraPose, Vec3 } from '../store/useCurioStore'
+import { MOODS, POSE_ORDER, poseFor } from '../data/sections'
+import type { Mood, SectionId } from '../data/sections'
 
 /**
  * Camera + mood sampling. Pure functions of the scroll float — the ONLY
@@ -70,7 +70,7 @@ export interface SampledMood {
   keyIntensity: number
   rimIntensity: number
   ambientIntensity: number
-  /** Scratch color — copy out, never hold. */
+  /** Owned color — sampled into, never aliased. */
   keyColor: THREE.Color
 }
 
@@ -94,5 +94,5 @@ export function sampleMood(scrollFloat: number, out: SampledMood): void {
   _colorA.set(a.keyColor)
   _colorB.set(b.keyColor)
   _scratch.copy(_colorA).lerp(_colorB, t)
-  out.keyColor = _scratch
+  out.keyColor.copy(_scratch)
 }

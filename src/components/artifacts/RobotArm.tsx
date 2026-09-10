@@ -2,11 +2,11 @@ import { useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import type { ThreeEvent } from '@react-three/fiber'
 import * as THREE from 'three'
-import { PROJECT_SLOT, slotProximity } from '../../data/sections.ts'
-import { scrollState } from '../../lib/scroll.ts'
-import { useCurioStore } from '../../store/useCurioStore.ts'
-import { usePrefersReducedMotion } from '../../hooks/useCurio.ts'
-import { ArtifactModel } from './ArtifactModel.tsx'
+import { PROJECT_SLOT, SECTION_MAP, slotProximity } from '../../data/sections'
+import { scrollState } from '../../lib/scroll'
+import { useCurioStore } from '../../store/useCurioStore'
+import { usePrefersReducedMotion } from '../../hooks/useCurio'
+import { ArtifactModel } from './ArtifactModel'
 
 const L1 = 0.62
 const L2 = 0.55
@@ -69,9 +69,11 @@ export function RobotArm({ bare = false }: { bare?: boolean }) {
     }
 
     const k = Math.min(1, dt * 3.2)
-    yaw.current.rotation.y += (targetYaw - yaw.current.rotation.y) * k
-    shoulder.current.rotation.x += (targetShoulder - shoulder.current.rotation.x) * k
-    elbow.current.rotation.x += (targetElbow - elbow.current.rotation.x) * k
+    if (yaw.current) yaw.current.rotation.y += (targetYaw - yaw.current.rotation.y) * k
+    if (shoulder.current) {
+      shoulder.current.rotation.x += (targetShoulder - shoulder.current.rotation.x) * k
+    }
+    if (elbow.current) elbow.current.rotation.x += (targetElbow - elbow.current.rotation.x) * k
 
     const fingerGap = 0.045 + grip
     if (fingerL.current) fingerL.current.position.x = -fingerGap
@@ -82,10 +84,10 @@ export function RobotArm({ bare = false }: { bare?: boolean }) {
   const handleSelect = (e: ThreeEvent<MouseEvent>): void => {
     e.stopPropagation()
     const st = useCurioStore.getState()
-    if (Math.round(scrollState.float) === 4) {
+    if (Math.round(scrollState.float) === SECTION_MAP.arm.stop) {
       if (waveT.current >= 1) waveT.current = 0
     } else {
-      st.goToSection(4)
+      st.goToSection(SECTION_MAP.arm.stop)
     }
   }
 
@@ -186,7 +188,7 @@ export function ArmShowcase({ assetUrl = null }: { assetUrl?: string | null }) {
 
   useFrame((_state, rawDt) => {
     const dt = Math.min(rawDt, 0.05)
-    if (!reducedMotion) spinner.current.rotation.y += dt * 0.35
+    if (!reducedMotion && spinner.current) spinner.current.rotation.y += dt * 0.35
     const prox = slotProximity(scrollState.float, PROJECT_SLOT.arm)
     if (glowMat.current) glowMat.current.opacity = 0.04 + prox * 0.16
   })
@@ -196,7 +198,7 @@ export function ArmShowcase({ assetUrl = null }: { assetUrl?: string | null }) {
       onPointerDown={(e) => e.stopPropagation()}
       onClick={(e) => {
         e.stopPropagation()
-        useCurioStore.getState().goToSection(4)
+        useCurioStore.getState().goToSection(SECTION_MAP.arm.stop)
       }}
       onPointerOver={(e) => {
         e.stopPropagation()

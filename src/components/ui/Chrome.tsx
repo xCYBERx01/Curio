@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
 import { animate } from 'animejs'
-import { SECTION_MAP } from '../../data/sections.ts'
-import { useCurioStore } from '../../store/useCurioStore.ts'
-import { usePrefersReducedMotion } from '../../hooks/useCurio.ts'
-import { SiteIndex } from './SiteIndex.tsx'
+import { SECTION_MAP } from '../../data/sections'
+import { useCurioStore } from '../../store/useCurioStore'
+import { usePrefersReducedMotion } from '../../hooks/useCurio'
+import { SiteIndex } from './SiteIndex'
 
 /**
  * Restrained chrome: wordmark, live section readout, index. Navigation
@@ -19,17 +19,21 @@ export function Chrome() {
   useEffect(() => {
     if (!ready) return
     const d = reducedMotion ? 1 : 650
-    animate('.curio-header', {
+    const a = animate('.curio-header', {
       opacity: [0, 1],
       translateY: [-8, 0],
       duration: d,
       ease: 'outCubic',
     })
-    animate('.curio-sec, .curio-rail', {
+    const b = animate('.curio-sec, .curio-rail', {
       opacity: [0, 1],
       duration: d,
       ease: 'outCubic',
     })
+    return () => {
+      a.cancel()
+      b.cancel()
+    }
   }, [ready, reducedMotion])
 
   return (
