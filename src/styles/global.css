@@ -83,6 +83,9 @@ body {
 
 .curio-canvas-wrap canvas {
   display: block;
+  /* The journey scrolls natively: vertical touch must always win over the
+     canvas. Click/hover interactions are unaffected. */
+  touch-action: pan-y;
 }
 
 .curio-vignette {
