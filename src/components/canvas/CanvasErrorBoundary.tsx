@@ -28,7 +28,11 @@ export class CanvasErrorBoundary extends Component<Props, State> {
         : typeof error === 'string'
           ? error
           : 'Unknown render failure'
-    return { failed: true, message }
+    const stack =
+      error instanceof Error && typeof error.stack === 'string'
+        ? error.stack.split('\n').slice(0, 4).join('\n')
+        : null
+    return { failed: true, message: stack ? `${message}\n${stack}` : message }
   }
 
   componentDidCatch(error: unknown): void {
