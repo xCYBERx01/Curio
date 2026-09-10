@@ -2,6 +2,7 @@ import { useEffect, useState, useSyncExternalStore } from 'react'
 import { SECTIONS } from '../data/sections.ts'
 import { syncScrollState } from '../lib/scroll.ts'
 import { useCurioStore } from '../store/useCurioStore.ts'
+import { preloadArtifactAsset } from '../components/artifacts/ArtifactModel.tsx'
 
 function matchQuery(query: string): boolean {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false
@@ -52,6 +53,7 @@ export function useCompactViewport(): boolean {
 export function useScrollDriver(): void {
   useEffect(() => {
     let queued = false
+    let nrlPreloaded = false
     const onScroll = (): void => {
       if (queued) return
       queued = true
@@ -60,6 +62,12 @@ export function useScrollDriver(): void {
         const f = syncScrollState()
         const stop = Math.min(SECTIONS.length - 1, Math.max(0, Math.round(f)))
         useCurioStore.getState().setActiveSection(SECTIONS[stop].id)
+        // Stream the heavy NRL assembly only once the journey is underway —
+        // never block first paint with it.
+        if (!nrlPreloaded && f > 0.7) {
+          nrlPreloaded = true
+          preloadArtifactAsset('/models/nrlbot.glb')
+        }
       })
     }
     syncScrollState()
