@@ -73,6 +73,15 @@ body {
   touch-action: pan-y;
 }
 
+/* Cinematic depth cue: gentle vignette over the 3D frame only. */
+.curio-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 42%, transparent 52%, rgba(0, 0, 0, 0.42) 100%);
+}
+
 /* ---------- header chrome ---------- */
 
 .curio-header {
@@ -512,6 +521,19 @@ body {
 
 .curio-node-tag[data-state="inactive"] {
   opacity: 0.35;
+}
+
+/* Staggered label entrances. `backwards` fill releases to natural
+   (data-state) styles after the flight — never overrides dimming. */
+@keyframes curio-tag-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+}
+
+.curio-tag-in {
+  animation: curio-tag-in 0.55s var(--ease-out) backwards;
 }
 
 /* ---------- load screen ---------- */

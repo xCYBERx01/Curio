@@ -53,6 +53,7 @@ export function CurioCanvas() {
             <SceneRoot />
           </Suspense>
         </Canvas>
+        <div className="curio-vignette" aria-hidden="true" />
       </CanvasErrorBoundary>
     </div>
   )

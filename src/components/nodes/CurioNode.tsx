@@ -1,4 +1,4 @@
-import { Component, Suspense, useMemo, useRef } from 'react'
+import { Component, Suspense, useEffect, useMemo, useRef } from 'react'
 import type { ReactNode } from 'react'
 import { Html, useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
@@ -80,6 +80,28 @@ function CoreGeometry({ id }: { id: string }) {
       return <torusGeometry args={[0.3, 0.12, 16, 40]} />
     case 'interests':
       return <tetrahedronGeometry args={[0.52, 0]} />
+    case 'desko':
+      return <boxGeometry args={[0.5, 0.5, 0.5]} />
+    case 'meadow':
+      return <coneGeometry args={[0.36, 0.62, 5]} />
+    case 'kharcha':
+      return <cylinderGeometry args={[0.36, 0.36, 0.18, 24]} />
+    case 'sportcast':
+      return <dodecahedronGeometry args={[0.4, 0]} />
+    case 'anicatch':
+      return <torusGeometry args={[0.26, 0.1, 12, 28]} />
+    case 'field-shutter':
+      return <boxGeometry args={[0.62, 0.3, 0.42]} />
+    case 'drone':
+      return <octahedronGeometry args={[0.38, 0]} />
+    case 'moon-rover':
+      return <torusGeometry args={[0.3, 0.09, 10, 24]} />
+    case 'iot-telemetry':
+      return <icosahedronGeometry args={[0.3, 1]} />
+    case 'field-analyzer':
+      return <boxGeometry args={[0.45, 0.45, 0.18]} />
+    case 'projectdirec':
+      return <octahedronGeometry args={[0.34, 0]} />
     case 'contact':
     default:
       return <icosahedronGeometry args={[0.34, 0]} />
@@ -91,7 +113,7 @@ function CoreGeometry({ id }: { id: string }) {
 /* Global selection stays in Zustand; visual/hover state stays local.   */
 /* ------------------------------------------------------------------ */
 
-export function CurioNode({ spec }: { spec: CurioNodeSpec }) {
+export function CurioNode({ spec, order }: { spec: CurioNodeSpec; order: number }) {
   const active = useCurioStore((s) => s.activeNodeId === spec.id)
   const inactive = useCurioStore((s) => s.activeNodeId !== null && s.activeNodeId !== spec.id)
   const hovered = useCurioStore((s) => s.hoveredNodeId === spec.id)
@@ -102,6 +124,15 @@ export function CurioNode({ spec }: { spec: CurioNodeSpec }) {
   const spinner = useRef<THREE.Group>(null!)
   const coreMat = useRef<THREE.MeshStandardMaterial>(null!)
   const ringMat = useRef<THREE.MeshBasicMaterial>(null!)
+  const pulseMesh = useRef<THREE.Mesh>(null!)
+  const pulseMat = useRef<THREE.MeshBasicMaterial>(null!)
+  const pingMesh = useRef<THREE.Mesh>(null!)
+  const pingMat = useRef<THREE.MeshBasicMaterial>(null!)
+
+  // Local clocks — no React state, no re-renders, no allocations per frame.
+  const enterClock = useRef(0)
+  const pingT = useRef(1)
+  const phase = (order * 0.37) % 1
 
   const state: NodeVisualState = spec.disabled
     ? 'disabled'
@@ -141,14 +172,35 @@ export function CurioNode({ spec }: { spec: CurioNodeSpec }) {
     document.body.style.cursor = ''
   }
 
-  // Per-node animation: scale, slow rotation, emissive. No object
+  // Restart the floor ping every time this node becomes active.
+  useEffect(() => {
+    if (active) pingT.current = 0
+  }, [active])
+
+  // Per-node animation: staggered entrance, slow rotation, breathing
+  // emissive, survey pulse down the mast, select ping. No object
   // allocation here — all targets are module-level constants.
-  useFrame((_, rawDt) => {
+  useFrame((state, rawDt) => {
     const dt = Math.min(rawDt, 0.05)
     const k = 1 - Math.exp(-6 * dt)
+    const t = state.clock.elapsedTime
+    const st = useCurioStore.getState()
 
-    const targetScale = spec.scale * (active ? 1.16 : hovered ? 1.07 : inactive ? 0.94 : 1)
-    const s = THREE.MathUtils.damp(outer.current.scale.x, targetScale, 6, dt)
+    // Entrance: rise in index order once the load gate opens.
+    let enterP: number
+    if (!st.ready) {
+      enterP = 0
+    } else if (reducedMotion) {
+      enterP = 1
+    } else {
+      enterClock.current += dt
+      enterP = THREE.MathUtils.clamp((enterClock.current - 0.1 - order * 0.075) / 0.55, 0, 1)
+    }
+    const ease = 1 - Math.pow(1 - enterP, 3)
+
+    const stateScale = active ? 1.16 : hovered ? 1.07 : inactive ? 0.94 : 1
+    const targetScale = Math.max(0.0001, spec.scale * stateScale * ease)
+    const s = THREE.MathUtils.damp(outer.current.scale.x, targetScale, 8, dt)
     outer.current.scale.setScalar(s)
 
     if (!reducedMotion) {
@@ -160,7 +212,8 @@ export function CurioNode({ spec }: { spec: CurioNodeSpec }) {
     if (coreMat.current) {
       coreMat.current.color.lerp(inactive ? DIM : BASE, k)
       coreMat.current.emissive.lerp(active ? ACCENT : hovered ? HOVER_EMISSIVE : IDLE_EMISSIVE, k)
-      const targetGlow = active ? 1.15 : hovered ? 0.7 : 0.5
+      let targetGlow = active ? 1.15 : hovered ? 0.7 : 0.5
+      if (!reducedMotion) targetGlow += Math.sin(t * 1.3 + phase * 6.283) * 0.08
       coreMat.current.emissiveIntensity = THREE.MathUtils.damp(
         coreMat.current.emissiveIntensity,
         targetGlow,
@@ -173,6 +226,30 @@ export function CurioNode({ spec }: { spec: CurioNodeSpec }) {
       ringMat.current.color.lerp(active ? ACCENT : hovered ? HOVER_EMISSIVE : IDLE_EMISSIVE, k)
       const targetOpacity = active ? 0.95 : hovered ? 0.6 : 0.32
       ringMat.current.opacity = THREE.MathUtils.damp(ringMat.current.opacity, targetOpacity, 6, dt)
+    }
+
+    // Survey pulse: a measurement dot travelling core → floor.
+    if (pulseMesh.current && pulseMat.current) {
+      const show = !reducedMotion && st.ready && enterP > 0.9
+      pulseMesh.current.visible = show
+      if (show) {
+        const cycle = (t * 0.36 + phase) % 1
+        pulseMesh.current.position.y = -0.25 + (floorY + 0.35) * cycle
+        pulseMat.current.opacity = Math.sin(cycle * Math.PI) * 0.85
+      }
+    }
+
+    // Select ping: one expanding ring per activation.
+    if (pingMesh.current && pingMat.current) {
+      if (pingT.current < 1) {
+        pingT.current = Math.min(1, pingT.current + dt / 0.85)
+        const e = 1 - Math.pow(1 - pingT.current, 3)
+        pingMesh.current.visible = true
+        pingMesh.current.scale.setScalar(1 + e * 3.4)
+        pingMat.current.opacity = (1 - pingT.current) * 0.7
+      } else {
+        pingMesh.current.visible = false
+      }
     }
   })
 
@@ -229,7 +306,11 @@ export function CurioNode({ spec }: { spec: CurioNodeSpec }) {
           wrapperClass="curio-node-label"
           pointerEvents="none"
         >
-          <div className="curio-node-tag" data-state={state}>
+          <div
+            className="curio-node-tag curio-tag-in"
+            data-state={state}
+            style={{ animationDelay: `${450 + order * 70}ms` }}
+          >
             <span className="n-idx">{spec.index}</span>
             <span>{spec.label}</span>
           </div>
@@ -240,6 +321,12 @@ export function CurioNode({ spec }: { spec: CurioNodeSpec }) {
       <mesh position={[0, (floorY - 0.35) / 2, 0]}>
         <cylinderGeometry args={[0.008, 0.008, Math.max(0.1, spec.position[1] - 0.35), 6]} />
         <meshBasicMaterial color={active ? '#ff4d00' : '#33333c'} toneMapped={false} />
+      </mesh>
+
+      {/* Survey pulse dot — animated in useFrame. */}
+      <mesh ref={pulseMesh} position={[0, -0.25, 0]} visible={false}>
+        <sphereGeometry args={[0.035, 10, 10]} />
+        <meshBasicMaterial ref={pulseMat} color="#ff4d00" transparent opacity={0} toneMapped={false} />
       </mesh>
 
       {/* Floor puck + selection ring. */}
@@ -261,6 +348,11 @@ export function CurioNode({ spec }: { spec: CurioNodeSpec }) {
       <mesh position={[0, floorY + 0.008, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[0.55, 32]} />
         <meshBasicMaterial color="#000000" transparent opacity={0.42} depthWrite={false} />
+      </mesh>
+      {/* Select ping — one expanding ring per activation. */}
+      <mesh ref={pingMesh} position={[0, floorY + 0.03, 0]} rotation={[-Math.PI / 2, 0, 0]} visible={false}>
+        <torusGeometry args={[0.3, 0.01, 8, 48]} />
+        <meshBasicMaterial ref={pingMat} color="#ff4d00" transparent opacity={0} toneMapped={false} />
       </mesh>
     </group>
   )

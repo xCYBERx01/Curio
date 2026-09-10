@@ -1,6 +1,7 @@
 import { NODES } from '../../data/nodes.ts'
 import { CameraRig } from '../camera/CameraRig.tsx'
 import { EnvironmentSetup } from '../environment/EnvironmentSetup.tsx'
+import { NodeLinks } from '../environment/NodeLinks.tsx'
 import { CurioNode } from '../nodes/CurioNode.tsx'
 
 /**
@@ -12,8 +13,9 @@ export function SceneRoot() {
   return (
     <group>
       <EnvironmentSetup />
-      {NODES.map((spec) => (
-        <CurioNode key={spec.id} spec={spec} />
+      <NodeLinks />
+      {NODES.map((spec, i) => (
+        <CurioNode key={spec.id} spec={spec} order={i} />
       ))}
       <CameraRig />
     </group>
