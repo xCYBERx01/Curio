@@ -53,6 +53,7 @@ export function useCompactViewport(): boolean {
 export function useScrollDriver(): void {
   useEffect(() => {
     let queued = false
+    let armPreloaded = false
     let nrlPreloaded = false
     const onScroll = (): void => {
       if (queued) return
@@ -62,6 +63,13 @@ export function useScrollDriver(): void {
         const f = syncScrollState()
         const stop = Math.min(SECTIONS.length - 1, Math.max(0, Math.round(f)))
         useCurioStore.getState().setActiveSection(SECTIONS[stop].id)
+        // Stream bay models progressively as the journey approaches them —
+        // first paint never pays for geometry. Procedural fallbacks hold
+        // each bay until its GLB arrives.
+        if (!armPreloaded && f > 0.4) {
+          armPreloaded = true
+          preloadArtifactAsset('/models/robo-arm.glb')
+        }
         // Stream the heavy NRL assembly only once the journey is underway —
         // never block first paint with it.
         if (!nrlPreloaded && f > 0.7) {

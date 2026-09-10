@@ -22,11 +22,11 @@ export function CurioCanvas() {
     <div className="curio-canvas-wrap" aria-hidden={false}>
       <CanvasErrorBoundary>
         <Canvas
-          dpr={compact ? [1, 1.5] : [1, 1.75]}
+          dpr={compact ? [1, 1.25] : [1, 1.75]}
           gl={{
-            antialias: true,
+            antialias: !compact,
             alpha: false,
-            powerPreference: 'high-performance',
+            powerPreference: compact ? 'low-power' : 'high-performance',
             stencil: false,
           }}
           camera={{

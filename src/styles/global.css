@@ -705,6 +705,16 @@ a.curio-index-link:hover {
   margin-top: 16px;
 }
 
+.curio-links .curio-retry {
+  margin-top: 0;
+}
+
+.curio-error code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  word-break: break-word;
+}
+
 /* SEO / screen-reader fallback content (visually hidden, still indexed) */
 .curio-sr-content {
   position: fixed;
