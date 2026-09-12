@@ -1,7 +1,8 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
+import type Lenis from 'lenis'
 import { SECTIONS, SECTION_MAP } from '../data/sections'
 import { preloadArtifactAsset } from '../lib/models'
-import { syncScrollState } from '../lib/scroll'
+import { setLenisInstance, syncScrollState } from '../lib/scroll'
 import { useCurioStore } from '../store/useCurioStore'
 
 function matchQuery(query: string): boolean {
@@ -85,6 +86,45 @@ export function useScrollDriver(): void {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+}
+
+/**
+ * Lenis smooth scroll — lazily imported so it never touches the critical
+ * bundle. Skipped entirely under reduced motion (native scroll takes over
+ * and scrollToSection falls back to window.scrollTo automatically).
+ * Lenis animates real window scroll, so the existing scroll driver,
+ * camera sampling and section detection keep working unchanged.
+ */
+export function useLenis(): void {
+  const reducedMotion = usePrefersReducedMotion()
+
+  useEffect(() => {
+    if (reducedMotion) return
+    let disposed = false
+    let raf = 0
+    let lenis: Lenis | null = null
+    import('lenis')
+      .then(({ default: LenisClass }) => {
+        if (disposed) return
+        lenis = new LenisClass({ lerp: 0.09 })
+        setLenisInstance(lenis)
+        const loop = (time: number): void => {
+          lenis?.raf(time)
+          raf = requestAnimationFrame(loop)
+        }
+        raf = requestAnimationFrame(loop)
+      })
+      .catch(() => {
+        if (import.meta.env.DEV) console.warn('[curio] lenis failed to load; native scroll active.')
+      })
+    return () => {
+      disposed = true
+      cancelAnimationFrame(raf)
+      lenis?.destroy()
+      lenis = null
+      setLenisInstance(null)
+    }
+  }, [reducedMotion])
 }
 
 /**

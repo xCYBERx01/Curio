@@ -1,11 +1,13 @@
 import { CurioCanvas } from '../components/canvas/CurioCanvas'
 import { Chrome } from '../components/ui/Chrome'
 import { LoadScreen } from '../components/ui/LoadScreen'
+import { MagneticCursor } from '../components/ui/MagneticCursor'
 import { ScrollRail } from '../components/ui/ScrollRail'
 import { SectionOverlay } from '../components/ui/SectionOverlay'
+import { SplineDock } from '../components/ui/SplineDock'
 import { ARCHIVE_IDS, STOP_COUNT } from '../data/sections'
 import { IDENTITY_CONTENT, getProject } from '../data/projects'
-import { useCompactViewport, useCurioKeyboard, useScrollDriver } from '../hooks/useCurio'
+import { useCompactViewport, useCurioKeyboard, useLenis, useScrollDriver } from '../hooks/useCurio'
 
 /**
  * Curio — a scroll-driven spatial journey. Composition only:
@@ -15,6 +17,7 @@ import { useCompactViewport, useCurioKeyboard, useScrollDriver } from '../hooks/
  */
 export default function App() {
   useCompactViewport()
+  useLenis()
   useScrollDriver()
   useCurioKeyboard()
 
@@ -29,9 +32,11 @@ export default function App() {
         <main aria-label="Curio spatial journey">
           <CurioCanvas />
         </main>
+        <SplineDock />
         <SectionOverlay />
         <ScrollRail />
       </div>
+      <MagneticCursor />
       {/* Scroll track: its length IS the journey timeline. */}
       <div className="curio-scroll" aria-hidden="true" style={{ height: `${STOP_COUNT * 100}vh` }} />
 

@@ -29,6 +29,20 @@ body {
   color: #fff;
 }
 
+/* Lenis smooth scroll: required base styles. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
 .skip-link {
   position: fixed;
   top: -48px;
@@ -94,6 +108,48 @@ body {
   z-index: 1;
   pointer-events: none;
   background: radial-gradient(ellipse at 50% 42%, transparent 60%, rgba(0, 0, 0, 0.1) 100%);
+}
+
+/* Spline dock: full-viewport scene layer above the R3F world (z 1),
+   below the editorial overlay (z 20). Mounts only for stops that
+   configure a splineUrl; the R3F world shows through while loading. */
+.curio-spline {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 600ms var(--ease-out);
+}
+
+.curio-spline[data-visible="true"] {
+  opacity: 1;
+}
+
+.curio-spline canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* Magnetic cursor: trailing accent ring. Native cursor stays visible. */
+.curio-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid var(--curio-accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 70;
+  opacity: 0;
+}
+
+@media (pointer: coarse) {
+  .curio-cursor {
+    display: none;
+  }
 }
 
 /* ---------- header chrome ---------- */

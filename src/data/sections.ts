@@ -31,6 +31,8 @@ export interface SectionSpec {
   projectId?: string
   /** GLB under /public for the bay artifact. Null = procedural build. */
   assetUrl?: string | null
+  /** Spline `.splinecode` URL for a full-viewport scene dock. Null = R3F world. */
+  splineUrl?: string | null
   /** Attribution line for a third-party model (license honesty). */
   credit?: string
 }

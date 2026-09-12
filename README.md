@@ -58,3 +58,8 @@ Key contracts:
   preload via `preloadArtifactAsset()`. Failures fall back per-artifact.
 - **Reduced motion** steps discretely between stops (no glide), freezes
   idle motion, and shortens UI timelines — functionality preserved.
+- **Smooth scroll** is Lenis (lazy chunk, skipped under reduced motion).
+  It animates real window scroll, so the scroll driver needs no changes.
+- **Spline dock**: set `splineUrl` (a `.splinecode` URL) on any stop in
+  `src/data/sections.ts` and that stop crossfades a full-viewport Spline
+  scene over the R3F world. No URL = zero cost (runtime lazy-loads).
