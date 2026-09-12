@@ -218,7 +218,7 @@ export function ArmShowcase({ assetUrl = null }: { assetUrl?: string | null }) {
       </group>
       <mesh position={[0, 0.07, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[0.95, 40]} />
-        <meshBasicMaterial ref={glowMat} color="#0071e3" transparent opacity={0.04} depthWrite={false} toneMapped={false} />
+        <meshBasicMaterial ref={glowMat} color="#e23a1e" transparent opacity={0.04} depthWrite={false} toneMapped={false} />
       </mesh>
     </group>
   )
