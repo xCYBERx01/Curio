@@ -55,7 +55,7 @@ export function HeroCore() {
         </mesh>
         <mesh>
           <icosahedronGeometry args={[0.3, 1]} />
-          <meshBasicMaterial ref={glowMat} color="#0071e3" transparent opacity={0.8} toneMapped={false} />
+          <meshBasicMaterial ref={glowMat} color="#e23a1e" transparent opacity={0.8} toneMapped={false} />
         </mesh>
         <mesh ref={ringA} rotation={[0.5, 0, 0]}>
           <torusGeometry args={[1.25, 0.03, 8, 64]} />

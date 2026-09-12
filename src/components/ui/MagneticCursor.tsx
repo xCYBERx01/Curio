@@ -15,6 +15,7 @@ export function MagneticCursor() {
     )
   })
   const ring = useRef<HTMLDivElement>(null)
+  const dot = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!enabled) return
@@ -44,10 +45,15 @@ export function MagneticCursor() {
       pos.x = px
       pos.y = py
       scale += (targetScale - scale) * 0.18
-      const el = ring.current
-      if (el) {
-        el.style.transform = `translate3d(${px}px, ${py}px, 0) translate(-50%, -50%) scale(${scale.toFixed(3)})`
-        el.style.opacity = opacity.toFixed(2)
+      const ringEl = ring.current
+      if (ringEl) {
+        ringEl.style.transform = `translate3d(${px}px, ${py}px, 0) translate(-50%, -50%) scale(${scale.toFixed(3)})`
+        ringEl.style.opacity = opacity.toFixed(2)
+      }
+      const dotEl = dot.current
+      if (dotEl) {
+        dotEl.style.transform = `translate3d(${target.x}px, ${target.y}px, 0) translate(-50%, -50%)`
+        dotEl.style.opacity = opacity.toFixed(2)
       }
       raf = requestAnimationFrame(loop)
     }
@@ -64,5 +70,10 @@ export function MagneticCursor() {
   }, [enabled])
 
   if (!enabled) return null
-  return <div ref={ring} className="curio-cursor" aria-hidden="true" />
+  return (
+    <>
+      <div ref={ring} className="curio-cursor" aria-hidden="true" />
+      <div ref={dot} className="curio-cursor-dot" aria-hidden="true" />
+    </>
+  )
 }

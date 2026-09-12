@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { animate } from 'animejs'
-import { SECTION_MAP } from '../../data/sections'
+import { NAV_SECTIONS, SECTION_MAP } from '../../data/sections'
 import { useCurioStore } from '../../store/useCurioStore'
 import { usePrefersReducedMotion } from '../../hooks/useCurio'
 import { SiteIndex } from './SiteIndex'
@@ -53,6 +53,19 @@ export function Chrome() {
       <div className="curio-current" role="status" aria-live="polite">
         {spec.nav ?? '00 — ENTER'}
       </div>
+      <nav className="curio-sections" aria-label="Journey chapters">
+        {NAV_SECTIONS.map((s) => (
+          <button
+            key={s.id}
+            type="button"
+            data-active={activeSection === s.id}
+            aria-current={activeSection === s.id ? 'true' : undefined}
+            onClick={() => useCurioStore.getState().goToSection(s.stop)}
+          >
+            {s.nav}
+          </button>
+        ))}
+      </nav>
       <SiteIndex />
     </header>
   )

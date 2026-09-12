@@ -62,7 +62,7 @@ export function TurntableStage() {
       {/* Dais */}
       <mesh position={[0, -0.06, 0]}>
         <cylinderGeometry args={[5.4, 5.55, 0.24, 72]} />
-        <meshStandardMaterial color="#e4e4ea" roughness={0.85} metalness={0.05} />
+        <meshStandardMaterial color="#141418" roughness={0.9} metalness={0.1} />
       </mesh>
       {/* Rim tick marks: twelve survey ticks. */}
       {Array.from({ length: 12 }, (_, i) => {
@@ -74,7 +74,7 @@ export function TurntableStage() {
             rotation={[0, a, 0]}
           >
             <boxGeometry args={[0.05, 0.012, i % 3 === 0 ? 0.34 : 0.18]} />
-            <meshBasicMaterial color={i % 3 === 0 ? '#b5b5bd' : '#d5d5db'} toneMapped={false} />
+            <meshBasicMaterial color={i % 3 === 0 ? '#3a3a44' : '#26262c'} toneMapped={false} />
           </mesh>
         )
       })}
@@ -94,7 +94,7 @@ export function TurntableStage() {
         {[0, SLOT_ANGLE, SLOT_ANGLE * 2].map((a) => (
           <mesh key={a} position={[Math.sin(a) * 1.7, 0.065, Math.cos(a) * 1.7]} rotation={[0, a, 0]}>
             <boxGeometry args={[0.03, 0.008, 3.4]} />
-            <meshBasicMaterial color="#d8d8de" toneMapped={false} />
+            <meshBasicMaterial color="#1e1e24" toneMapped={false} />
           </mesh>
         ))}
       </group>

@@ -37,17 +37,18 @@ export function CurioCanvas() {
           }}
           onCreated={({ gl }) => {
             gl.toneMapping = THREE.ACESFilmicToneMapping
-            gl.toneMappingExposure = 1.0
+            gl.toneMappingExposure = 1.1
           }}
           aria-label="Curio 3D journey. Scroll to travel; use the rail or index for keyboard access."
         >
-          <color attach="background" args={['#f5f5f7']} />
-          <fog attach="fog" args={['#f5f5f7', 16, 32]} />
+          <color attach="background" args={['#0b0b0e']} />
+          <fog attach="fog" args={['#0b0b0e', 16, 32]} />
           {/* No outer Suspense: each bay suspends independently with its own
               procedural fallback, so one loading GLB never blanks the world. */}
           <Scene />
         </Canvas>
         <div className="curio-vignette" aria-hidden="true" />
+        <div className="curio-grain" aria-hidden="true" />
       </CanvasErrorBoundary>
     </div>
   )

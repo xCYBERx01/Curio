@@ -214,10 +214,10 @@ export function CrocDevice({ assetUrl = null }: { assetUrl?: string | null }) {
               document.body.style.cursor = ''
             }}
           >
-            {/* Bench plinth — machined aluminum */}
+            {/* Bench plinth — machined dark steel */}
             <mesh position={[0, 0.31, 0]}>
               <boxGeometry args={[2.4, 0.5, 1.8]} />
-              <meshStandardMaterial color="#dcdce2" roughness={0.35} metalness={0.6} />
+              <meshStandardMaterial color="#1a1a1f" roughness={0.45} metalness={0.7} />
             </mesh>
             {/* PCB */}
             <mesh position={[0, 0.6, 0.1]}>
@@ -235,7 +235,7 @@ export function CrocDevice({ assetUrl = null }: { assetUrl?: string | null }) {
             </mesh>
             <mesh position={[-0.4, 0.64, -0.25]}>
               <boxGeometry args={[0.5, 0.006, 0.025]} />
-              <meshBasicMaterial color="#0071e3" toneMapped={false} />
+              <meshBasicMaterial color="#e23a1e" toneMapped={false} />
             </mesh>
             {/* Main chip + pin headers */}
             <mesh position={[-0.25, 0.67, 0.1]}>
@@ -258,7 +258,7 @@ export function CrocDevice({ assetUrl = null }: { assetUrl?: string | null }) {
             {/* OLED stand + live screen */}
             <mesh position={[0, 0.78, -0.3]}>
               <boxGeometry args={[0.2, 0.32, 0.1]} />
-              <meshStandardMaterial color="#c7c7cc" roughness={0.4} metalness={0.7} />
+              <meshStandardMaterial color="#3a3a44" roughness={0.4} metalness={0.7} />
             </mesh>
             {screen}
           </group>
@@ -267,7 +267,7 @@ export function CrocDevice({ assetUrl = null }: { assetUrl?: string | null }) {
       {/* Wakes with the section: faint orange bleed under the bench. */}
       <mesh position={[0, 0.075, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[2.6, 2.0]} />
-        <meshBasicMaterial ref={glowMat} color="#0071e3" transparent opacity={0.05} depthWrite={false} toneMapped={false} />
+        <meshBasicMaterial ref={glowMat} color="#e23a1e" transparent opacity={0.05} depthWrite={false} toneMapped={false} />
       </mesh>
     </group>
   )

@@ -99,13 +99,13 @@ export interface Mood {
 }
 
 export const MOODS: Record<SectionId, Mood> = {
-  intro: { keyIntensity: 1.0, keyColor: '#ffffff', rimIntensity: 0.45, ambientIntensity: 0.85 },
-  ahmed: { keyIntensity: 1.2, keyColor: '#fffaf2', rimIntensity: 0.4, ambientIntensity: 0.9 },
-  croc: { keyIntensity: 1.25, keyColor: '#fff2e6', rimIntensity: 0.4, ambientIntensity: 0.85 },
-  voltedge: { keyIntensity: 1.2, keyColor: '#ffffff', rimIntensity: 0.5, ambientIntensity: 0.9 },
-  arm: { keyIntensity: 1.15, keyColor: '#eef3ff', rimIntensity: 0.5, ambientIntensity: 0.85 },
-  interests: { keyIntensity: 1.05, keyColor: '#faf8f2', rimIntensity: 0.45, ambientIntensity: 0.85 },
-  contact: { keyIntensity: 0.9, keyColor: '#f2f4fa', rimIntensity: 0.4, ambientIntensity: 0.8 },
+  intro: { keyIntensity: 1.15, keyColor: '#e8ddcf', rimIntensity: 0.55, ambientIntensity: 0.42 },
+  ahmed: { keyIntensity: 1.5, keyColor: '#f2e8d8', rimIntensity: 0.5, ambientIntensity: 0.5 },
+  croc: { keyIntensity: 1.7, keyColor: '#ffd9c0', rimIntensity: 0.45, ambientIntensity: 0.48 },
+  voltedge: { keyIntensity: 1.6, keyColor: '#e8ecf5', rimIntensity: 0.65, ambientIntensity: 0.5 },
+  arm: { keyIntensity: 1.5, keyColor: '#dfe6f5', rimIntensity: 0.6, ambientIntensity: 0.48 },
+  interests: { keyIntensity: 1.2, keyColor: '#e8e2d4', rimIntensity: 0.55, ambientIntensity: 0.45 },
+  contact: { keyIntensity: 0.85, keyColor: '#cfd4e6', rimIntensity: 0.4, ambientIntensity: 0.36 },
 }
 
 /* ---------------- carousel ---------------- */

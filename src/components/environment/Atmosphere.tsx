@@ -49,7 +49,7 @@ export function Atmosphere() {
     points.current.position.y = Math.sin(t * 0.05) * 0.25
     if (mat.current) {
       // The air thickens slightly as the journey descends to contact.
-      const target = 0.26 + (scrollState.float / 6) * 0.14
+      const target = 0.3 + (scrollState.float / 6) * 0.16
       mat.current.opacity += (target - mat.current.opacity) * Math.min(1, dt)
     }
   })
@@ -59,10 +59,10 @@ export function Atmosphere() {
       <primitive object={geometry} attach="geometry" />
       <pointsMaterial
         ref={mat}
-        size={0.045}
-        color="#8e8e93"
+        size={0.055}
+        color="#c98a5e"
         transparent
-        opacity={0.28}
+        opacity={0.32}
         depthWrite={false}
         sizeAttenuation
       />

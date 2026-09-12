@@ -106,7 +106,7 @@ export function RoverArtifact({ bare = false }: { bare?: boolean }) {
         </mesh>
         <mesh position={[0, 0, 0.13]}>
           <sphereGeometry args={[0.055, 12, 12]} />
-          <meshBasicMaterial ref={lensMat} color="#0071e3" transparent opacity={0.7} toneMapped={false} />
+          <meshBasicMaterial ref={lensMat} color="#e23a1e" transparent opacity={0.7} toneMapped={false} />
         </mesh>
       </group>
 
@@ -126,7 +126,7 @@ export function RoverArtifact({ bare = false }: { bare?: boolean }) {
       {!bare && (
         <mesh position={[0, 0.075, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <planeGeometry args={[1.7, 1.2]} />
-          <meshBasicMaterial ref={glowMat} color="#0071e3" transparent opacity={0.05} depthWrite={false} toneMapped={false} />
+        <meshBasicMaterial ref={glowMat} color="#e23a1e" transparent opacity={0.05} depthWrite={false} toneMapped={false} />
         </mesh>
       )}
     </group>

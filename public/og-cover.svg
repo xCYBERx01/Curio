@@ -1,8 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
-  <rect width="1200" height="630" fill="#f5f5f7"/>
-  <rect x="80" y="80" width="1040" height="470" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="2"/>
-  <text x="120" y="300" font-family="-apple-system, Helvetica, Arial, sans-serif" font-weight="700" font-size="76" letter-spacing="20" fill="#1d1d1f">CURIO</text>
-  <text x="120" y="360" font-family="monospace" font-size="28" letter-spacing="6" fill="#6e6e73">AHMED — ROBOTICS &amp; AI</text>
-  <circle cx="120" cy="440" r="10" fill="#0071e3"/>
-  <text x="145" y="450" font-family="monospace" font-size="24" fill="#aeaeb2">SPATIAL PORTFOLIO</text>
+  <rect width="1200" height="630" fill="#0b0b0e"/>
+  <circle cx="950" cy="140" r="90" fill="#8e2318"/>
+  <rect x="80" y="80" width="1040" height="470" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="2"/>
+  <text x="120" y="300" font-family="-apple-system, Helvetica, Arial, sans-serif" font-weight="700" font-size="76" letter-spacing="20" fill="#ece7df">CURIO</text>
+  <text x="120" y="360" font-family="monospace" font-size="28" letter-spacing="6" fill="#a39e93">AHMED — ROBOTICS &amp; AI</text>
+  <circle cx="120" cy="440" r="10" fill="#e23a1e"/>
+  <text x="145" y="450" font-family="monospace" font-size="24" fill="#5f5b54">SPATIAL PORTFOLIO</text>
 </svg>

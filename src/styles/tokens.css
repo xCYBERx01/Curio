@@ -1,17 +1,18 @@
-/* CURIO design tokens — Apple HIG-grounded light system. */
+/* CURIO design tokens — nocturne system. Dark cinematic world, warm
+   paper text, single vermilion accent. Banner engineering, not SaaS. */
 
 :root {
-  --curio-bg: #f5f5f7;
-  --curio-bg-2: #ececf0;
-  --curio-panel: rgba(255, 255, 255, 0.72);
-  --curio-line: rgba(0, 0, 0, 0.12);
-  --curio-line-soft: rgba(0, 0, 0, 0.06);
-  --curio-text: #1d1d1f;
-  --curio-muted: #6e6e73;
-  --curio-faint: #aeaeb2;
-  --curio-accent: #0071e3;
-  --curio-accent-dim: rgba(0, 113, 227, 0.12);
-  --curio-ok: #248a3d;
+  --curio-bg: #0b0b0e;
+  --curio-bg-2: #121215;
+  --curio-panel: rgba(12, 12, 16, 0.72);
+  --curio-line: rgba(255, 255, 255, 0.14);
+  --curio-line-soft: rgba(255, 255, 255, 0.07);
+  --curio-text: #ece7df;
+  --curio-muted: #a39e93;
+  --curio-faint: #5f5b54;
+  --curio-accent: #e23a1e;
+  --curio-accent-dim: rgba(226, 58, 30, 0.16);
+  --curio-ok: #7fae7a;
 
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
   --font-mono: "SF Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;

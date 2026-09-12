@@ -93,7 +93,14 @@ export function SectionOverlay() {
   }, [activeSection, reducedMotion])
 
   return (
-    <div ref={rootRef} id="curio-overlay" className="curio-sec" data-section={spec.id}>
+    <>
+      <div className="curio-ghost" aria-hidden="true">
+        {spec.nav ? spec.nav.split(' ')[0] : '00'}
+      </div>
+      <div ref={rootRef} id="curio-overlay" className="curio-sec" data-section={spec.id}>
+      <div className="curio-ghost" aria-hidden="true">
+        {spec.nav ? spec.nav.split(' ')[0] : '00'}
+      </div>
       <div className="curio-sec-inner" aria-live="polite">
         {spec.id === 'intro' && (
           <>
@@ -171,5 +178,6 @@ export function SectionOverlay() {
         )}
       </div>
     </div>
+    </>
   )
 }

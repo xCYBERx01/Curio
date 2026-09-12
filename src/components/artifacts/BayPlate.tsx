@@ -47,17 +47,17 @@ export function BayPlate({
     const ctx = c.getContext('2d')
     if (ctx) {
       ctx.clearRect(0, 0, 512, 288)
-      ctx.fillStyle = 'rgba(255,255,255,0.94)'
+      ctx.fillStyle = 'rgba(12,12,16,0.88)'
       roundRectPath(ctx, 4, 4, 504, 280, 30)
       ctx.fill()
-      ctx.strokeStyle = 'rgba(0,0,0,0.14)'
+      ctx.strokeStyle = 'rgba(255,255,255,0.16)'
       ctx.lineWidth = 2
       roundRectPath(ctx, 4, 4, 504, 280, 30)
       ctx.stroke()
-      ctx.fillStyle = '#0071e3'
+      ctx.fillStyle = '#e23a1e'
       ctx.font = '600 26px ui-monospace, SFMono-Regular, Menlo, monospace'
       ctx.fillText(index, 38, 62)
-      ctx.fillStyle = '#1d1d1f'
+      ctx.fillStyle = '#ece7df'
       const word = title.toUpperCase()
       let size = 112
       const family = "-apple-system, 'SF Pro Display', Inter, sans-serif"
@@ -66,7 +66,7 @@ export function BayPlate({
         size -= 6
       } while (ctx.measureText(word).width > 436 && size > 36)
       ctx.fillText(word, 32, 178)
-      ctx.fillStyle = '#6e6e73'
+      ctx.fillStyle = '#a39e93'
       ctx.font = '500 25px ui-monospace, SFMono-Regular, Menlo, monospace'
       ctx.fillText(sub.toUpperCase().slice(0, 30), 38, 232)
     }
@@ -89,7 +89,7 @@ export function BayPlate({
   })
 
   return (
-    <mesh position={[-2.05, 1.62, 0.35]}>
+    <mesh position={[-2.35, 1.32, 0.3]}>
       <planeGeometry args={[1.62, 0.91]} />
       <meshBasicMaterial ref={mat} map={texture} transparent toneMapped={false} />
     </mesh>
