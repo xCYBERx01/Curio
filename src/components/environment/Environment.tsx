@@ -51,7 +51,7 @@ export function Environment() {
 
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.19, 0]}>
         <circleGeometry args={[14, 64]} />
-        <meshStandardMaterial color="#101014" roughness={0.96} metalness={0} />
+        <meshStandardMaterial color="#17171c" roughness={0.94} metalness={0} />
       </mesh>
 
       <Grid
@@ -59,10 +59,10 @@ export function Environment() {
         args={[26, 26]}
         cellSize={compact ? 1.2 : 0.7}
         cellThickness={0.6}
-        cellColor="#232329"
+        cellColor="#2e2e38"
         sectionSize={3.5}
         sectionThickness={1}
-        sectionColor="#34343e"
+        sectionColor="#46464f"
         fadeDistance={26}
         fadeStrength={2.4}
         followCamera={false}
@@ -71,12 +71,12 @@ export function Environment() {
 
       {/* Vermilion moon + halo: the nocturne backdrop. fog:false keeps
           it burning through the haze. Static — the journey moves, it waits. */}
-      <mesh position={[7, 8.5, -25]}>
+      <mesh position={[4.5, 6.0, -22]}>
         <circleGeometry args={[6.5, 48]} />
         <meshBasicMaterial color="#4a130d" transparent opacity={0.5} fog={false} toneMapped={false} />
       </mesh>
-      <mesh position={[7, 8.5, -24.8]}>
-        <circleGeometry args={[4.1, 48]} />
+      <mesh position={[4.5, 6.0, -21.8]}>
+        <circleGeometry args={[4.6, 48]} />
         <meshBasicMaterial color="#8e2318" fog={false} toneMapped={false} />
       </mesh>
 

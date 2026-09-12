@@ -37,7 +37,7 @@ export function CurioCanvas() {
           }}
           onCreated={({ gl }) => {
             gl.toneMapping = THREE.ACESFilmicToneMapping
-            gl.toneMappingExposure = 1.1
+            gl.toneMappingExposure = 1.28
           }}
           aria-label="Curio 3D journey. Scroll to travel; use the rail or index for keyboard access."
         >

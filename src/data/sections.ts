@@ -73,13 +73,13 @@ export const ARCHIVE_IDS = [
 /* ---------------- camera poses (fov stays constant) ---------------- */
 
 const POSES: Record<SectionId, CameraPose> = {
-  intro: { position: [0, 3.0, 11.6], lookAt: [0, 1.5, -1.5] },
-  ahmed: { position: [0, 2.3, 8.4], lookAt: [0, 1.3, -1.0] },
-  croc: { position: [0.4, 1.8, 6.2], lookAt: [0, 1.05, 3.0] },
-  voltedge: { position: [-2.4, 2.1, 7.2], lookAt: [0, 1.0, 2.8] },
-  arm: { position: [2.4, 2.1, 7.2], lookAt: [0, 1.05, 2.8] },
-  interests: { position: [-6.8, 2.6, 5.2], lookAt: [0, 1.5, -0.5] },
-  contact: { position: [0, 5.4, 12.8], lookAt: [0, 0.6, -2.0] },
+  intro: { position: [0, 2.6, 11.0], lookAt: [0, 1.1, -1.0] },
+  ahmed: { position: [0, 2.0, 7.6], lookAt: [0, 1.0, -0.6] },
+  croc: { position: [0.4, 1.6, 5.9], lookAt: [0, 1.0, 2.9] },
+  voltedge: { position: [-2.2, 1.9, 6.6], lookAt: [0, 1.0, 2.9] },
+  arm: { position: [2.2, 1.9, 6.6], lookAt: [0, 1.0, 2.9] },
+  interests: { position: [-6.2, 2.3, 5.0], lookAt: [0, 1.2, -0.5] },
+  contact: { position: [0, 4.6, 11.6], lookAt: [0, 0.7, -1.6] },
 }
 
 export const POSE_ORDER: SectionId[] = SECTIONS.map((s) => s.id)
@@ -99,13 +99,13 @@ export interface Mood {
 }
 
 export const MOODS: Record<SectionId, Mood> = {
-  intro: { keyIntensity: 1.15, keyColor: '#e8ddcf', rimIntensity: 0.55, ambientIntensity: 0.42 },
-  ahmed: { keyIntensity: 1.5, keyColor: '#f2e8d8', rimIntensity: 0.5, ambientIntensity: 0.5 },
-  croc: { keyIntensity: 1.7, keyColor: '#ffd9c0', rimIntensity: 0.45, ambientIntensity: 0.48 },
-  voltedge: { keyIntensity: 1.6, keyColor: '#e8ecf5', rimIntensity: 0.65, ambientIntensity: 0.5 },
-  arm: { keyIntensity: 1.5, keyColor: '#dfe6f5', rimIntensity: 0.6, ambientIntensity: 0.48 },
-  interests: { keyIntensity: 1.2, keyColor: '#e8e2d4', rimIntensity: 0.55, ambientIntensity: 0.45 },
-  contact: { keyIntensity: 0.85, keyColor: '#cfd4e6', rimIntensity: 0.4, ambientIntensity: 0.36 },
+  intro: { keyIntensity: 1.25, keyColor: '#e8ddcf', rimIntensity: 0.6, ambientIntensity: 0.54 },
+  ahmed: { keyIntensity: 1.6, keyColor: '#f2e8d8', rimIntensity: 0.55, ambientIntensity: 0.62 },
+  croc: { keyIntensity: 1.8, keyColor: '#ffd9c0', rimIntensity: 0.5, ambientIntensity: 0.6 },
+  voltedge: { keyIntensity: 1.7, keyColor: '#e8ecf5', rimIntensity: 0.7, ambientIntensity: 0.62 },
+  arm: { keyIntensity: 1.6, keyColor: '#dfe6f5', rimIntensity: 0.65, ambientIntensity: 0.6 },
+  interests: { keyIntensity: 1.3, keyColor: '#e8e2d4', rimIntensity: 0.55, ambientIntensity: 0.57 },
+  contact: { keyIntensity: 0.95, keyColor: '#cfd4e6', rimIntensity: 0.45, ambientIntensity: 0.48 },
 }
 
 /* ---------------- carousel ---------------- */
