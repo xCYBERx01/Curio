@@ -73,11 +73,11 @@ export const ARCHIVE_IDS = [
 /* ---------------- camera poses (fov stays constant) ---------------- */
 
 const POSES: Record<SectionId, CameraPose> = {
-  intro: { position: [0, 3.6, 12.0], lookAt: [0, 1.9, -1.5] },
+  intro: { position: [0, 3.0, 11.6], lookAt: [0, 1.5, -1.5] },
   ahmed: { position: [0, 2.3, 8.4], lookAt: [0, 1.3, -1.0] },
-  croc: { position: [0.5, 1.9, 6.6], lookAt: [0, 1.1, 1.8] },
-  voltedge: { position: [-1.7, 1.9, 6.2], lookAt: [-0.4, 1.1, 2.2] },
-  arm: { position: [1.7, 1.9, 6.2], lookAt: [0.4, 1.2, 2.2] },
+  croc: { position: [0.4, 1.8, 6.2], lookAt: [0, 1.05, 3.0] },
+  voltedge: { position: [-2.4, 2.1, 7.2], lookAt: [0, 1.0, 2.8] },
+  arm: { position: [2.4, 2.1, 7.2], lookAt: [0, 1.05, 2.8] },
   interests: { position: [-6.8, 2.6, 5.2], lookAt: [0, 1.5, -0.5] },
   contact: { position: [0, 5.4, 12.8], lookAt: [0, 0.6, -2.0] },
 }

@@ -29,7 +29,9 @@ export function HeroCore() {
   })
 
   return (
-    <group position={[0, 0.06, -0.6]}>
+    // Sits behind the turntable (not inside it) so the pole never crosses
+    // close-up bay framings — a backdrop installation, not an obstruction.
+    <group position={[0, 0.06, -4.6]}>
       {/* Survey pole */}
       <mesh position={[0, 1.3, 0]}>
         <cylinderGeometry args={[0.09, 0.13, 2.6, 12]} />
