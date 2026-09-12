@@ -12,19 +12,24 @@ export function HeroCore() {
   const core = useRef<THREE.Mesh>(null!)
   const ringA = useRef<THREE.Mesh>(null!)
   const ringB = useRef<THREE.Mesh>(null!)
+  const orbit = useRef<THREE.Group>(null!)
   const glowMat = useRef<THREE.MeshBasicMaterial>(null!)
   const reducedMotion = usePrefersReducedMotion()
 
   useFrame((state, rawDt) => {
     const dt = Math.min(rawDt, 0.05)
     if (reducedMotion) return
-    if (!core.current || !ringA.current || !ringB.current) return
+    if (!core.current || !ringA.current || !ringB.current || !orbit.current) return
     const t = state.clock.elapsedTime
     core.current.rotation.y += dt * 0.22
+    // Breathing mass: barely-there swell.
+    const breath = 1 + Math.sin(t * 0.8) * 0.022
+    core.current.scale.setScalar(breath)
     ringA.current.rotation.y -= dt * 0.3
     ringA.current.rotation.x = 0.5 + Math.sin(t * 0.24) * 0.12
     ringB.current.rotation.y += dt * 0.18
     ringB.current.rotation.z = 0.35 + Math.cos(t * 0.19) * 0.1
+    orbit.current.rotation.y += dt * 0.12
     if (glowMat.current) glowMat.current.opacity = 0.75 + Math.sin(t * 1.1) * 0.15
   })
 
@@ -60,6 +65,18 @@ export function HeroCore() {
           <torusGeometry args={[1.55, 0.018, 8, 72]} />
           <meshBasicMaterial color="#c7c7cc" toneMapped={false} />
         </mesh>
+        {/* Orbit ticks: eight survey satellites circling the reactor. */}
+        <group ref={orbit}>
+          {Array.from({ length: 8 }, (_, i) => {
+            const a = (i / 8) * Math.PI * 2
+            return (
+              <mesh key={i} position={[Math.cos(a) * 1.95, 0, Math.sin(a) * 1.95]}>
+                <octahedronGeometry args={[0.05, 0]} />
+                <meshBasicMaterial color={i % 2 === 0 ? '#0071e3' : '#8e8e93'} toneMapped={false} />
+              </mesh>
+            )
+          })}
+        </group>
       </group>
     </group>
   )

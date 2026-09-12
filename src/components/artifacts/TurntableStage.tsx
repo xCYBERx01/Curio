@@ -1,9 +1,12 @@
 import { useMemo, useRef } from 'react'
+import type { ReactNode } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { SECTION_MAP, TURNTABLE_RADIUS, stageAngleFor } from '../../data/sections'
+import type { SectionId } from '../../data/sections'
 import { scrollState } from '../../lib/scroll'
 import { usePrefersReducedMotion } from '../../hooks/useCurio'
+import { BayPlate } from './BayPlate'
 import { CrocDevice } from './CrocDevice'
 import { RoverShowcase } from './RoverArtifact'
 import { ArmShowcase } from './RobotArm'
@@ -26,12 +29,31 @@ export function TurntableStage() {
     wheel.current.rotation.y = stageAngleFor(f)
   })
 
+  const bays: { id: SectionId; slot: number; content: ReactNode }[] = [
+    { id: 'croc', slot: 0, content: <CrocDevice assetUrl={SECTION_MAP.croc.assetUrl ?? null} /> },
+    { id: 'voltedge', slot: 1, content: <RoverShowcase assetUrl={SECTION_MAP.voltedge.assetUrl ?? null} /> },
+    { id: 'arm', slot: 2, content: <ArmShowcase assetUrl={SECTION_MAP.arm.assetUrl ?? null} /> },
+  ]
   const slots = useMemo(
-    () => [
-      { angle: 0, content: <CrocDevice assetUrl={SECTION_MAP.croc.assetUrl ?? null} /> },
-      { angle: SLOT_ANGLE, content: <RoverShowcase assetUrl={SECTION_MAP.voltedge.assetUrl ?? null} /> },
-      { angle: SLOT_ANGLE * 2, content: <ArmShowcase assetUrl={SECTION_MAP.arm.assetUrl ?? null} /> },
-    ],
+    () =>
+      bays.map((b) => {
+        const spec = SECTION_MAP[b.id]
+        const [index, ...rest] = spec.kicker.split('—')
+        return {
+          angle: b.slot * SLOT_ANGLE,
+          content: (
+            <>
+              {b.content}
+              <BayPlate
+                slot={b.slot}
+                index={index.trim()}
+                title={spec.title}
+                sub={rest.join('—').trim()}
+              />
+            </>
+          ),
+        }
+      }),
     [],
   )
 

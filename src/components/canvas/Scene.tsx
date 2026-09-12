@@ -1,4 +1,5 @@
 import { CameraController } from '../camera/CameraController'
+import { Atmosphere } from '../environment/Atmosphere'
 import { Environment } from '../environment/Environment'
 import { HeroCore } from '../artifacts/HeroCore'
 import { TurntableStage } from '../artifacts/TurntableStage'
@@ -12,6 +13,7 @@ export function Scene() {
   return (
     <group>
       <Environment />
+      <Atmosphere />
       <HeroCore />
       <TurntableStage />
       <CameraController />
